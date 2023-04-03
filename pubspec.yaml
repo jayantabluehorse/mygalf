@@ -1,0 +1,47 @@
+name: my_galf
+description: A new Flutter project.
+
+publish_to: 'none' # Remove this line if you wish to publish to 
+version: 1.0.0+1
+
+environment:
+  sdk: '>=2.19.2 <3.0.0'
+
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_svg: ^2.0.2
+
+
+  cupertino_icons: ^1.0.2
+  carousel_slider: ^4.2.1
+  google_fonts: ^4.0.3
+  flutter_rating_bar: ^4.0.1
+  get: ^4.6.5
+  hovering: ^1.0.4
+  flutter_dash: ^1.0.0
+  flutter_sticky_widgets: ^0.0.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^2.0.0
+
+flutter:
+  uses-material-design: true
+
+ 
+  assets:
+    - assets/images/
+    - assets/icons/
+
+  fonts:
+    - family: test
+      fonts:
+        - asset: assets/fonts/test.ttf
+    
+    - family: rubik
+      fonts:
+        - asset: assets/fonts/rubik.ttf
