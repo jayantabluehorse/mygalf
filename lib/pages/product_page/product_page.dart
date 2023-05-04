@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:my_galf/components/constant.dart';
 import 'package:my_galf/components/footer.dart';
 import 'package:my_galf/components/navbar.dart';
+import 'package:my_galf/components/product_card.dart';
+import 'package:my_galf/pages/cart/cart_controller.dart';
+import 'package:my_galf/pages/product_details_page/product_details_controller.dart';
+import 'package:my_galf/pages/product_page/product_controller.dart';
+
+import '../../components/request_callback/request_callback.dart';
 
 class ProductPage extends StatefulWidget {
   const ProductPage({Key? key}) : super(key: key);
@@ -14,39 +20,14 @@ class ProductPage extends StatefulWidget {
 
 class _ProductPageState extends State<ProductPage> {
   int currenIndex = -1;
-  final List<Map> myProducts = [
-    {
-      "title": "Running Shoes For Men",
-      "image": "assets/images/running_shoes_men.png",
-    },
-    {
-      "title": "Running Watch For Men",
-      "image": "assets/images/running_watch_men.png"
-    },
-    {"title": "Running Watch For Men", "image": "assets/images/fast_up.png"},
-    {"title": "Running Watch For Men", "image": "assets/images/hand.png"},
-    {
-      "title": "Running Shoes For Men",
-      "image": "assets/images/running_shoes_men.png"
-    },
-    {
-      "title": "Running Watch For Men",
-      "image": "assets/images/running_watch_men.png"
-    },
-    {"title": "Running Watch For Men", "image": "assets/images/fast_up.png"},
-    {"title": "Running Watch For Men", "image": "assets/images/hand.png"},
-    {
-      "title": "Running Shoes For Men",
-      "image": "assets/images/running_shoes_men.png"
-    },
-    {
-      "title": "Running Watch For Men",
-      "image": "assets/images/running_watch_men.png"
-    },
-    {"title": "Running Watch For Men", "image": "assets/images/fast_up.png"},
-    {"title": "Running Watch For Men", "image": "assets/images/hand.png"}
-  ];
+  ProductController productController = Get.find<ProductController>();
+  ProductDetailsController productDetailsController =
+      Get.find<ProductDetailsController>();
+  final CartController _cartController = Get.find<CartController>();
+  bool isAllItem = false;
+
   final ScrollController _scrollController = ScrollController();
+
   bool isCategory = true;
   void typeHandler(type) {
     setState(() {
@@ -61,7 +42,21 @@ class _ProductPageState extends State<ProductPage> {
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    // Future.delayed(Duration.zero, () async {
+    //   productController.fetchProducts();
+    // });
+
+    // Future.delayed(Duration.zero, () {
+    //   productController.fetchProducts();
+    // });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    // print("------------------------------${productController.productList}");
     final currentWidth = MediaQuery.of(context).size.width;
     final currentScreen = currentWidth <= 300
         ? "xsmall"
@@ -74,926 +69,549 @@ class _ProductPageState extends State<ProductPage> {
         // appBar: AppBar(
         //   title: Text("$currentWidth"),
         // ),
-        body: SizedBox(
-            width: double.infinity,
-            child: ListView(children: [
-              //navbar is component
-              Navbar(currentScreen: currentScreen),
-              ProductHeroCarousel(
-                  context: context,
-                  scrollController: _scrollController,
-                  isCategory: isCategory,
-                  typeHandler: typeHandler),
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          toolbarHeight: 115,
+          elevation: 0,
+          flexibleSpace:
+              Navbar(currentScreen: currentScreen, selected: 'products'),
+        ),
+        body: Stack(
+          children: [
+            Obx(
+              () => Container(
+                  color: Colors.white,
+                  width: double.infinity,
+                  child: ListView(children: [
+                    //navbar is component
+
+                    productHeroCarousel(
+                        context: context,
+                        scrollController: _scrollController,
+                        isCategory: isCategory,
+                        typeHandler: typeHandler),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    productFilter(context: context),
+                    const SizedBox(
+                      height: 50,
+                    ),
+                    productList(
+                        updateLocation: updateLocation,
+                        myProducts: productController.productList,
+                        currenIndex: currenIndex),
+                    Footer(context: context)
+                  ])),
+            ),
+            const RequestCallback()
+          ],
+        ));
+  }
+
+  Widget productFilter({required context}) {
+    return UnconstrainedBox(
+      child: SizedBox(
+        // color: Colors.red,
+        width: MediaQuery.of(context).size.width * 0.8,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(isCategory ? "Shop By Category " : "Shop By Brand",
+                style: GoogleFonts.rubik(
+                  textStyle: const TextStyle(
+                      fontSize: 25, fontWeight: FontWeight.w700),
+                )),
+            const SizedBox(
+              width: 30,
+            ),
+            SizedBox(
+              // color: Colors.red,
+              width: MediaQuery.of(context).size.width * 0.30,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Expanded(
+                    child: Container(
+                      height: 40,
+                      padding: const EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                          color: const Color(0xFFefeff4),
+                          borderRadius: BorderRadius.circular(10)),
+                      child: DropdownButton(
+                          isExpanded: true,
+                          icon: const Icon(Icons.expand_more),
+                          underline: const Text(""),
+                          hint: const FittedBox(
+                            child: Text(
+                              "Gender",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF585858)),
+                            ),
+                          ),
+                          items: const [
+                            DropdownMenuItem(
+                                value: "data", child: Text("Male")),
+                            DropdownMenuItem(
+                                value: "data1", child: Text("Female")),
+                            DropdownMenuItem(
+                                value: "data2", child: Text("Other")),
+                          ],
+                          onChanged: (value) {}),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  Expanded(
+                    child: Container(
+                      height: 40,
+                      padding: const EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                          color: const Color(0xFFefeff4),
+                          borderRadius: BorderRadius.circular(10)),
+                      child: DropdownButton(
+                          isExpanded: true,
+                          icon: const Icon(Icons.expand_more),
+                          underline: const Text(""),
+                          hint: const FittedBox(
+                            child: Text(
+                              "Price",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF585858)),
+                            ),
+                          ),
+                          items: const [
+                            DropdownMenuItem(
+                                value: "data", child: Text("999-299")),
+                            DropdownMenuItem(
+                                value: "data1", child: Text("2999-5999")),
+                            DropdownMenuItem(
+                                value: "data2", child: Text("5999 and Above")),
+                          ],
+                          onChanged: (value) {}),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  Expanded(
+                    child: Container(
+                      height: 40,
+                      padding: const EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                          color: const Color(0xFFefeff4),
+                          borderRadius: BorderRadius.circular(10)),
+                      child: DropdownButton(
+                          isExpanded: true,
+                          icon: const Icon(Icons.expand_more),
+                          underline: const Text(""),
+                          hint: const FittedBox(
+                            child: Text(
+                              "Brand",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF585858)),
+                            ),
+                          ),
+                          items: const [
+                            DropdownMenuItem(
+                                value: "data", child: Text("Brand 1")),
+                            DropdownMenuItem(
+                                value: "data1", child: Text("Brand 2")),
+                            DropdownMenuItem(
+                                value: "data2", child: Text("Brand 3")),
+                          ],
+                          onChanged: (value) {}),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  Expanded(
+                    child: Container(
+                      height: 40,
+                      padding: const EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                          color: const Color(0xFFefeff4),
+                          borderRadius: BorderRadius.circular(10)),
+                      child: DropdownButton(
+                          isExpanded: true,
+                          icon: const Icon(Icons.expand_more),
+                          underline: const Text(""),
+                          hint: const FittedBox(
+                            child: Text(
+                              "Color",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF585858)),
+                            ),
+                          ),
+                          items: const [
+                            DropdownMenuItem(value: "data", child: Text("Red")),
+                            DropdownMenuItem(
+                                value: "data1", child: Text("Green")),
+                            DropdownMenuItem(
+                                value: "data2", child: Text("Blue")),
+                          ],
+                          onChanged: (value) {}),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  // Expanded(
+                  //   child: SizedBox(
+                  //     height: 40,
+                  //     child: ElevatedButton(
+                  //         onPressed: () {}, child: const Text("Apply")),
+                  //   ),
+                  // ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget productHeroCarousel(
+      {required context,
+      required scrollController,
+      required isCategory,
+      required typeHandler}) {
+    return Container(
+      height: 400,
+      width: MediaQuery.of(context).size.width,
+      // color: Colors.blue,
+      decoration: const BoxDecoration(
+          image: DecorationImage(
+              fit: BoxFit.fill,
+              image: AssetImage("assets/images/product_hero.png"))),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            isCategory ? "Shop By Category " : "Shop By Brand",
+            style: const TextStyle(
+                fontWeight: FontWeight.w700, fontSize: 22, color: Colors.black),
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          const Text(
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In maximus, mauris a aliquet\ncongue, elit quam ultrices odio, quis fermentum odio augue ac tellus.",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontWeight: FontWeight.w400, fontSize: 11, color: Colors.black),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              InkWell(
+                onTap: () {
+                  scrollController.animateTo(
+                    scrollController.offset - 300.0,
+                    duration: const Duration(milliseconds: 500),
+                    curve: Curves.ease,
+                  );
+                },
+                child: Container(
+                  padding: const EdgeInsets.only(left: 6),
+                  alignment: Alignment.center,
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                      // color: Colors.red,
+                      border: Border.all(color: Colors.black)),
+                  child: const Icon(
+                    Icons.arrow_back_ios,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+              const SizedBox(
+                width: 15,
+              ),
+              isCategory
+                  ? SizedBox(
+                      height: 200,
+                      width: MediaQuery.of(context).size.width * 0.7,
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        controller: scrollController,
+                        scrollDirection: Axis.horizontal,
+                        itemCount: productController.categoryData.length,
+                        //  isCategory ? "Shop By Category " : "Shop By Brand"
+                        itemBuilder: (context, index) {
+                          return InkWell(
+                            onTap: () {
+                              // print(
+                              // productController.categoryData[index]["id"]);
+
+                              productController.handleFilter(
+                                  brandId: "",
+                                  gender: "",
+                                  categoryId: productController
+                                      .categoryData[index]["id"],
+                                  color: "");
+                            },
+                            child: Container(
+                              // color: Colors.red,
+                              // color: Colors.green,
+                              width: 140,
+                              margin: const EdgeInsets.only(right: 40),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  CircleAvatar(
+                                    radius: 65,
+                                    backgroundColor: Colors.white,
+                                    child: ClipOval(
+                                      child: Image.network(
+                                        productController.categoryData[index]
+                                            ["image"],
+                                        width: 100,
+                                      ),
+                                    ),
+                                    // backgroundImage: NetworkImage(
+                                    //     productController.categoryData[index]
+                                    //         ["image"]),
+                                    // child: Image.network(
+                                    //   // "assets/images/shoe.png",
+                                    //   productController.categoryData[index]
+                                    //       ["image"],
+                                    //   width: 80,
+                                    // ),
+                                  ),
+                                  const SizedBox(
+                                    height: 5,
+                                  ),
+                                  Center(
+                                    child: Text(
+                                      productController.categoryData[index]
+                                          ["title"],
+                                      maxLines: 1,
+                                      softWrap: true,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    )
+                  : SizedBox(
+                      //  color: Colors.green,
+
+                      height: 200,
+                      width: MediaQuery.of(context).size.width * 0.7,
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        controller: scrollController,
+                        scrollDirection: Axis.horizontal,
+                        itemCount: productController.brandData.length,
+                        //  isCategory ? "Shop By Category " : "Shop By Brand"
+                        itemBuilder: (context, index) {
+                          return InkWell(
+                            onTap: () {
+                              productController.handleFilter(
+                                  brandId: productController.brandData[index]
+                                      ["id"],
+                                  gender: "",
+                                  categoryId: "",
+                                  color: "");
+                            },
+                            child: Container(
+                              width: 140,
+                              margin: const EdgeInsets.only(right: 40),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  CircleAvatar(
+                                    radius: 65,
+                                    backgroundColor: Colors.white,
+
+                                    child: Image.network(
+                                      productController.brandData[index]
+                                          ["image"],
+                                      width: 80,
+                                    ),
+                                    // backgroundImage: NetworkImage(
+
+                                    //     productController.brandData[index]
+                                    //         ["image"])
+                                    // child: Image.network(
+                                    //   // "assets/images/shoe.png",
+                                    //   productController.brandData[index]
+                                    //       ["image"],
+                                    //   width: 80,
+                                    // ),
+                                  ),
+                                  const SizedBox(
+                                    height: 5,
+                                  ),
+                                  Center(
+                                    child: Text(
+                                      productController.brandData[index]
+                                          ["title"],
+                                      maxLines: 1,
+                                      softWrap: true,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+              const SizedBox(
+                width: 15,
+              ),
+              InkWell(
+                onTap: () {
+                  scrollController.animateTo(
+                    scrollController.offset + 300.0,
+                    duration: const Duration(milliseconds: 500),
+                    curve: Curves.ease,
+                  );
+                },
+                child: Container(
+                  width: 40,
+                  height: 40,
+                  decoration:
+                      BoxDecoration(border: Border.all(color: Colors.black)),
+                  child: const Icon(
+                    Icons.arrow_forward_ios,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: 180,
+                height: 40,
+                child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            isCategory ? Colors.orange : Colors.white),
+                    onPressed: () {
+                      typeHandler(true);
+                    },
+                    child: Text(
+                      "Shop By Categories",
+                      style: TextStyle(
+                          color: isCategory ? Colors.white : Colors.black),
+                    )),
+              ),
+              const SizedBox(
+                width: 20,
+              ),
+              SizedBox(
+                width: 180,
+                height: 40,
+                child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            isCategory ? Colors.white : Colors.orange),
+                    onPressed: () {
+                      typeHandler(false);
+                    },
+                    child: Text(
+                      "Shop By Brand",
+                      style: TextStyle(
+                          color: isCategory ? Colors.black : Colors.white),
+                    )),
+              )
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget productList(
+      {required updateLocation, required myProducts, required currenIndex}) {
+    return UnconstrainedBox(
+      child: Container(
+          // height: 1600,
+          width: MediaQuery.of(context).size.width * 0.8,
+          color: Colors.white,
+          margin: const EdgeInsets.only(left: 25, right: 25),
+          // color: Colors.amber,
+          child: Column(
+            children: [
+              productController.isLoading == true
+                  ? myLoader
+                  : productController.productList.isEmpty
+                      ? myemptyDataView(context: context)
+                      : GridView.builder(
+                          shrinkWrap: true,
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                  //maxCrossAxisExtent: 200,
+                                  //childAspectRatio: 1,
+                                  mainAxisExtent: 457,
+                                  crossAxisSpacing: 40,
+                                  crossAxisCount: 4,
+                                  childAspectRatio: 1.2 / 2.0,
+                                  mainAxisSpacing: 50),
+                          itemCount: isAllItem
+                              ? productController.productList.length
+                              : productController.productList.length > 16
+                                  ? 16
+                                  : productController.productList.length,
+                          itemBuilder: (BuildContext ctx, index) {
+                            return Container(
+                              alignment: Alignment.center,
+                              child: ProductCard(
+                                myProducts: myProducts,
+                                index: index,
+                                updateLocation: updateLocation,
+                                currenIndex: currenIndex,
+                                cartController: _cartController,
+                                productController: productController,
+                              ),
+                            );
+                          }),
               const SizedBox(
                 height: 20,
               ),
-              ProductFilter(context: context),
-              productList(
-                  updateLocation: updateLocation,
-                  myProducts: myProducts,
-                  currenIndex: currenIndex),
-              Footer(context: context)
-            ])));
+              productController.productList.length < 16 && !isAllItem
+                  ? const SizedBox()
+                  : SizedBox(
+                      height: 50,
+                      width: 200,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            isAllItem = true;
+                          });
+                        },
+                        child: const Text("Load More"),
+                      ),
+                    )
+            ],
+          )),
+    );
   }
-}
-
-Widget ProductFilter({required context}) {
-  return UnconstrainedBox(
-    child: SizedBox(
-      // color: Colors.red,
-      width: MediaQuery.of(context).size.width * 0.9,
-      child: Row(
-        children: [
-          Text("Shop By Product",
-              style: GoogleFonts.rubik(
-                textStyle:
-                    const TextStyle(fontSize: 35, fontWeight: FontWeight.w500),
-              )),
-          const SizedBox(
-            width: 50,
-          ),
-          Expanded(
-              child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Expanded(
-                child: Container(
-                  height: 40,
-                  padding: const EdgeInsets.all(5),
-                  decoration: BoxDecoration(
-                      color: const Color.fromARGB(255, 255, 255, 255),
-                      borderRadius: BorderRadius.circular(10)),
-                  child: DropdownButton(
-                      isExpanded: true,
-                      icon: const Icon(Icons.expand_more),
-                      underline: const Text(""),
-                      hint: const Text(
-                        "Gender",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      items: const [
-                        DropdownMenuItem(value: "data", child: Text("Male")),
-                        DropdownMenuItem(value: "data1", child: Text("Female")),
-                        DropdownMenuItem(value: "data2", child: Text("Other")),
-                      ],
-                      onChanged: (value) {}),
-                ),
-              ),
-              const SizedBox(
-                width: 20,
-              ),
-              Expanded(
-                child: Container(
-                  height: 40,
-                  padding: const EdgeInsets.all(5),
-                  decoration: BoxDecoration(
-                      color: const Color.fromARGB(255, 255, 255, 255),
-                      borderRadius: BorderRadius.circular(10)),
-                  child: DropdownButton(
-                      isExpanded: true,
-                      icon: const Icon(Icons.expand_more),
-                      underline: const Text(""),
-                      hint: const Text(
-                        "Price",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      items: const [
-                        DropdownMenuItem(value: "data", child: Text("999-299")),
-                        DropdownMenuItem(
-                            value: "data1", child: Text("2999-5999")),
-                        DropdownMenuItem(
-                            value: "data2", child: Text("5999 ans Above")),
-                      ],
-                      onChanged: (value) {}),
-                ),
-              ),
-              const SizedBox(
-                width: 20,
-              ),
-              Expanded(
-                child: Container(
-                  height: 40,
-                  padding: const EdgeInsets.all(5),
-                  decoration: BoxDecoration(
-                      color: const Color.fromARGB(255, 255, 255, 255),
-                      borderRadius: BorderRadius.circular(10)),
-                  child: DropdownButton(
-                      isExpanded: true,
-                      icon: const Icon(Icons.expand_more),
-                      underline: const Text(""),
-                      hint: const Text(
-                        "Brand",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      items: const [
-                        DropdownMenuItem(value: "data", child: Text("Brand 1")),
-                        DropdownMenuItem(
-                            value: "data1", child: Text("Brand 2")),
-                        DropdownMenuItem(
-                            value: "data2", child: Text("Brand 3")),
-                      ],
-                      onChanged: (value) {}),
-                ),
-              ),
-              const SizedBox(
-                width: 20,
-              ),
-              Expanded(
-                child: Container(
-                  height: 40,
-                  padding: const EdgeInsets.all(5),
-                  decoration: BoxDecoration(
-                      color: const Color.fromARGB(255, 255, 255, 255),
-                      borderRadius: BorderRadius.circular(10)),
-                  child: DropdownButton(
-                      isExpanded: true,
-                      icon: const Icon(Icons.expand_more),
-                      underline: const Text(""),
-                      hint: const Text(
-                        "Color",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      items: const [
-                        DropdownMenuItem(value: "data", child: Text("Red")),
-                        DropdownMenuItem(value: "data1", child: Text("Green")),
-                        DropdownMenuItem(value: "data2", child: Text("Blue")),
-                      ],
-                      onChanged: (value) {}),
-                ),
-              ),
-              SizedBox(
-                width: 30,
-                child: ElevatedButton(
-                    onPressed: () {}, child: const Text("Apply")),
-              ),
-            ],
-          )),
-        ],
-      ),
-    ),
-  );
-}
-
-Widget ProductHeroCarousel(
-    {required context,
-    required scrollController,
-    required isCategory,
-    required typeHandler}) {
-  return Container(
-    height: 400,
-    width: MediaQuery.of(context).size.width,
-    // color: Colors.blue,
-    decoration: const BoxDecoration(
-        image: DecorationImage(
-            fit: BoxFit.fill,
-            image: AssetImage("assets/images/product_hero.png"))),
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          isCategory ? "Shop By Product " : "Shop By Product",
-          style: const TextStyle(
-              fontWeight: FontWeight.w700, fontSize: 22, color: Colors.black),
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-        const Text(
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In maximus, mauris a aliquet\ncongue, elit quam ultrices odio, quis fermentum odio augue ac tellus.",
-          textAlign: TextAlign.center,
-          style: TextStyle(
-              fontWeight: FontWeight.w400, fontSize: 11, color: Colors.black),
-        ),
-        const SizedBox(
-          height: 20,
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            GestureDetector(
-              onTap: () {
-                scrollController.animateTo(
-                  scrollController.offset - 300.0,
-                  duration: const Duration(milliseconds: 500),
-                  curve: Curves.ease,
-                );
-              },
-              child: Container(
-                width: 40,
-                height: 40,
-                decoration:
-                    BoxDecoration(border: Border.all(color: Colors.black)),
-                child: const Icon(
-                  Icons.arrow_back_ios,
-                  color: Colors.black,
-                ),
-              ),
-            ),
-            const SizedBox(
-              width: 15,
-            ),
-            isCategory
-                ? SizedBox(
-                    //  color: Colors.green,
-
-                    height: 200,
-                    width: MediaQuery.of(context).size.width * 0.7,
-                    child: ListView(
-                      controller: scrollController,
-                      scrollDirection: Axis.horizontal,
-                      children: [
-                        SizedBox(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              CircleAvatar(
-                                radius: 65,
-                                backgroundColor: Colors.white,
-                                child: Image.asset(
-                                  "assets/images/shoe.png",
-                                  width: 80,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              const Text(
-                                "shoes",
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              )
-                            ],
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 32,
-                        ),
-                        SizedBox(
-                            child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                              CircleAvatar(
-                                radius: 65,
-                                backgroundColor: Colors.white,
-                                child: Image.asset(
-                                  "assets/images/nutrition.png",
-                                  width: 80,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              const Text(
-                                "Nutrition",
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              )
-                            ])),
-                        const SizedBox(
-                          width: 32,
-                        ),
-                        SizedBox(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              CircleAvatar(
-                                radius: 65,
-                                backgroundColor: Colors.white,
-                                child: Image.asset(
-                                  "assets/images/cycle.png",
-                                  width: 80,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              const Text(
-                                "Cycling",
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              )
-                            ],
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 32,
-                        ),
-                        SizedBox(
-                            child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: const [
-                              CircleAvatar(
-                                radius: 65,
-                                backgroundColor: Colors.white,
-                                backgroundImage:
-                                    AssetImage("assets/images/runing.jpg"),
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Text(
-                                "Running",
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              )
-                            ])),
-                        const SizedBox(
-                          width: 32,
-                        ),
-                        SizedBox(
-                            child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                              CircleAvatar(
-                                radius: 65,
-                                backgroundColor: Colors.white,
-                                child: Image.asset(
-                                  "assets/images/triathlon.png",
-                                  width: 80,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              const Text(
-                                "Triathlon",
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              )
-                            ])),
-                        const SizedBox(
-                          width: 32,
-                        ),
-                        SizedBox(
-                            child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: const [
-                              CircleAvatar(
-                                radius: 65,
-                                backgroundColor: Colors.white,
-                                backgroundImage:
-                                    AssetImage("assets/images/footwear.jpg"),
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Text(
-                                "Footwear",
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              )
-                            ])),
-                        const SizedBox(
-                          width: 32,
-                        ),
-                        SizedBox(
-                            child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                              CircleAvatar(
-                                radius: 65,
-                                backgroundColor: Colors.white,
-                                child: Image.asset(
-                                  "assets/images/ergonomics.jpg",
-                                  width: 80,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              const Text(
-                                "Ergonomics",
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              )
-                            ])),
-                        const SizedBox(
-                          width: 32,
-                        ),
-                        SizedBox(
-                            child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                              CircleAvatar(
-                                radius: 65,
-                                backgroundColor: Colors.white,
-                                child: Image.asset(
-                                  "assets/images/watch.png",
-                                  width: 80,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              const Text(
-                                "watch",
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              )
-                            ])),
-                        const SizedBox(
-                          width: 32,
-                        ),
-                        SizedBox(
-                            child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                              CircleAvatar(
-                                radius: 65,
-                                backgroundColor: Colors.white,
-                                child: Image.asset(
-                                  "assets/images/shoe.png",
-                                  width: 80,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              const Text(
-                                "Shoe",
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              )
-                            ])),
-                      ],
-                    ),
-                  )
-                : SizedBox(
-                    // color: Colors.green,
-
-                    height: 200,
-                    width: MediaQuery.of(context).size.width * 0.7,
-                    child: ListView(
-                      controller: scrollController,
-                      scrollDirection: Axis.horizontal,
-                      children: [
-                        SizedBox(
-                            child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                              CircleAvatar(
-                                radius: 65,
-                                backgroundColor: Colors.white,
-                                child: Image.asset(
-                                  "assets/images/coros.png",
-                                  width: 80,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              const Text(
-                                "Coros",
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              )
-                            ])),
-                        const SizedBox(
-                          width: 32,
-                        ),
-                        SizedBox(
-                            child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                              CircleAvatar(
-                                radius: 65,
-                                backgroundColor: Colors.white,
-                                child: Image.asset(
-                                  "assets/images/saucony.png",
-                                  width: 80,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              const Text(
-                                "Saucony",
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              )
-                            ])),
-                        const SizedBox(
-                          width: 32,
-                        ),
-                        SizedBox(
-                            child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                              CircleAvatar(
-                                radius: 65,
-                                backgroundColor: Colors.white,
-                                child: Image.asset(
-                                  "assets/images/coros.png",
-                                  width: 80,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              const Text(
-                                "Coros",
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              )
-                            ])),
-                        const SizedBox(
-                          width: 32,
-                        ),
-                        SizedBox(
-                            child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                              CircleAvatar(
-                                radius: 65,
-                                backgroundColor: Colors.white,
-                                child: Image.asset(
-                                  "assets/images/fast_and_up.png",
-                                  width: 80,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              const Text(
-                                "Fast&Up",
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              )
-                            ])),
-                        const SizedBox(
-                          width: 32,
-                        ),
-                        SizedBox(
-                            child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                              CircleAvatar(
-                                radius: 65,
-                                backgroundColor: Colors.white,
-                                child: Image.asset(
-                                  "assets/images/coros.png",
-                                  width: 80,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              const Text(
-                                "Coros",
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              )
-                            ])),
-                        const SizedBox(
-                          width: 32,
-                        ),
-                        SizedBox(
-                            child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                              CircleAvatar(
-                                radius: 65,
-                                backgroundColor: Colors.white,
-                                child: Image.asset(
-                                  "assets/images/saucony.png",
-                                  width: 80,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              const Text(
-                                "Saucony",
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              )
-                            ])),
-                        const SizedBox(
-                          width: 32,
-                        ),
-                        SizedBox(
-                            child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                              CircleAvatar(
-                                radius: 65,
-                                backgroundColor: Colors.white,
-                                child: Image.asset(
-                                  "assets/images/coros.png",
-                                  width: 80,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              const Text(
-                                "Coros",
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              )
-                            ])),
-                        const SizedBox(
-                          width: 32,
-                        ),
-                        SizedBox(
-                            child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                              CircleAvatar(
-                                radius: 65,
-                                backgroundColor: Colors.white,
-                                child: Image.asset(
-                                  "assets/images/fast_and_up.png",
-                                  width: 80,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              const Text(
-                                "Fast&Up",
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              )
-                            ])),
-                        const SizedBox(
-                          width: 35,
-                        ),
-                      ],
-                    ),
-                  ),
-            const SizedBox(
-              width: 15,
-            ),
-            GestureDetector(
-              onTap: () {
-                scrollController.animateTo(
-                  scrollController.offset + 300.0,
-                  duration: const Duration(milliseconds: 500),
-                  curve: Curves.ease,
-                );
-              },
-              child: Container(
-                width: 40,
-                height: 40,
-                decoration:
-                    BoxDecoration(border: Border.all(color: Colors.black)),
-                child: const Icon(
-                  Icons.arrow_forward_ios,
-                  color: Colors.black,
-                ),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              width: 180,
-              height: 40,
-              child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: isCategory
-                          ? const Color.fromARGB(191, 255, 145, 0)
-                          : Colors.white),
-                  onPressed: () {
-                    typeHandler(true);
-                  },
-                  child: Text(
-                    "Shop By Categories",
-                    style: TextStyle(
-                        color: isCategory ? Colors.white : Colors.black),
-                  )),
-            ),
-            const SizedBox(
-              width: 20,
-            ),
-            SizedBox(
-              width: 180,
-              height: 40,
-              child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: isCategory
-                          ? Colors.white
-                          : const Color.fromARGB(191, 255, 145, 0)),
-                  onPressed: () {
-                    typeHandler(false);
-                  },
-                  child: Text(
-                    "Shop By Brand",
-                    style: TextStyle(
-                        color: isCategory ? Colors.black : Colors.white),
-                  )),
-            )
-          ],
-        ),
-      ],
-    ),
-  );
-}
-
-Widget productList(
-    {required updateLocation, required myProducts, required currenIndex}) {
-  return Container(
-    // height: 1600,
-    padding: const EdgeInsets.all(25),
-    margin: const EdgeInsets.only(left: 25, right: 25),
-    // color: Colors.amber,
-    child: GridView.builder(
-        shrinkWrap: true,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            //maxCrossAxisExtent: 200,
-            //childAspectRatio: 1,
-
-            crossAxisSpacing: 20,
-            crossAxisCount: 4,
-            childAspectRatio: 2 / 2.5,
-            mainAxisSpacing: 50),
-        itemCount: myProducts.length,
-        itemBuilder: (BuildContext ctx, index) {
-          return Container(
-            alignment: Alignment.center,
-            child: productCard(
-                myProducts: myProducts,
-                index: index,
-                updateLocation: updateLocation,
-                currenIndex: currenIndex),
-          );
-        }),
-  );
-}
-
-Widget productCard(
-    {required myProducts,
-    required index,
-    required updateLocation,
-    required currenIndex}) {
-  return MouseRegion(
-    onEnter: (event) {
-      //print(event);
-      updateLocation(index);
-    },
-    onExit: (event) {
-      updateLocation(-1);
-    },
-    child: Container(
-      padding: const EdgeInsets.only(top: 15, left: 10, right: 10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: currenIndex == index
-            ? [
-                const BoxShadow(
-                  blurRadius: 15,
-                  spreadRadius: 0.1,
-                  color: Color.fromARGB(255, 179, 179, 179),
-                )
-              ]
-            : [
-                const BoxShadow(
-                  blurRadius: 0,
-                  spreadRadius: 0,
-                  color: Color.fromARGB(255, 179, 179, 179),
-                )
-              ],
-      ),
-      //width: 287,
-      //  height: 467,
-
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Expanded(
-            child: GestureDetector(
-              onTap: () {
-                Get.toNamed("/pdp");
-              },
-              child: Container(
-                height: 150,
-                decoration: BoxDecoration(
-                    image: DecorationImage(
-                        image: AssetImage(
-                  myProducts[index]['image'],
-                ))),
-              ),
-            ),
-          ),
-          const SizedBox(
-            height: 11,
-          ),
-          Text(
-            myProducts[index]['title'],
-            style: const TextStyle(
-                fontSize: 19,
-                fontWeight: FontWeight.w700,
-                color: Color(0xFF1C4A64)),
-          ),
-          const SizedBox(
-            height: 4,
-          ),
-          const SizedBox(
-            width: 250,
-            child: Text(
-              "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-              maxLines: 2,
-              style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w400,
-                  color: Color(0xFF1C4A64)),
-              textAlign: TextAlign.center,
-            ),
-          ),
-          const SizedBox(
-            height: 8,
-          ),
-          Container(
-              child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const Text(
-                "2.75",
-                style: TextStyle(
-                    color: Colors.amber,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 14),
-              ),
-              const SizedBox(
-                width: 5,
-              ),
-              RatingBarIndicator(
-                rating: 2.75,
-                itemBuilder: (context, index) => const Icon(
-                  Icons.star,
-                  color: Colors.amber,
-                ),
-                itemCount: 5,
-                itemSize: 14,
-                direction: Axis.horizontal,
-              ),
-            ],
-          )),
-          const SizedBox(
-            height: 4,
-          ),
-          Container(
-              child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: const [
-              Text("₹1250",
-                  style: TextStyle(
-                      color: Color(0xFF1C4A64),
-                      fontWeight: FontWeight.w500,
-                      fontSize: 25)),
-              SizedBox(
-                width: 5,
-              ),
-              Text(
-                "₹2,499",
-                style: TextStyle(
-                    color: Color(0xFF1C4A64),
-                    fontWeight: FontWeight.w400,
-                    fontSize: 10),
-              ),
-              Text(
-                "(50% Off)",
-                style: TextStyle(
-                    color: Color(0xFF28C969),
-                    fontWeight: FontWeight.w400,
-                    fontSize: 10),
-              ),
-            ],
-          )),
-          currenIndex == index
-              ? Container(
-                  padding: const EdgeInsets.only(top: 3, bottom: 10),
-                  child: Row(
-                    children: [
-                      Expanded(
-                          flex: 2,
-                          child: ElevatedButton.icon(
-                              style: ElevatedButton.styleFrom(
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(10.0)),
-                                  backgroundColor: const Color(0xFFFF9900),
-                                  //  shape: const RoundedRectangleBorder(),
-                                  minimumSize: const Size(180, 50)
-
-                                  //onPrimary: Colors.black,
-                                  ),
-                              onPressed: () {
-                                Get.snackbar("Added", "Item Added Successfully",
-                                    backgroundColor: Colors.green);
-                              },
-                              icon: const Icon(
-                                Icons.lock,
-                                color: Colors.white,
-                                size: 13.0,
-                              ),
-                              label: const Text(
-                                "Add to Cart",
-                                style: TextStyle(
-                                    fontSize: 14, fontWeight: FontWeight.w500),
-                              ))),
-                      const Expanded(
-                        child: Icon(Icons.favorite_border,
-                            size: 24, color: Colors.black),
-                      )
-                    ],
-                  ),
-                )
-              : const SizedBox()
-        ],
-      ),
-    ),
-  );
 }

@@ -12,8 +12,6 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   final _emailController = TextEditingController();
   Map data = {};
 
-  String _errorMessage = "";
-
   // const ForgotPasswordPage({super.key});
   @override
   Widget build(BuildContext context) {
@@ -31,7 +29,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         children: [
           Column(
             children: [
-              Navbar(currentScreen: currentScreen),
+              Navbar(currentScreen: currentScreen, selected: 'forgotPass'),
               LoginTop(),
               Background(currentWidth)
             ],
@@ -83,8 +81,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                                   height: 25,
                                   width: 25,
                                   decoration: const BoxDecoration(
-                                      color: const Color.fromARGB(
-                                          66, 158, 158, 158),
+                                      color: Color.fromARGB(66, 158, 158, 158),
                                       borderRadius: BorderRadius.all(
                                           Radius.circular(15))),
                                   child: const Text("OR"),
@@ -251,7 +248,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                           child: Column(
                             children: [
                               const SizedBox(height: 15),
-                              TextFeildWidget(_emailController, "Enter Email"),
+                              textFeildWidget(_emailController, "Enter Email"),
                               const SizedBox(
                                 height: 20,
                               ),

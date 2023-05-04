@@ -38,20 +38,20 @@ class _BlogPageState extends State<BlogPage> {
       backgroundColor: Colors.white,
       body: ListView(
         children: [
-          Navbar(currentScreen: currentScreen),
-          PopularTagSection(),
+          Navbar(currentScreen: currentScreen, selected: 'blog'),
+          popularTagSection(),
           const SizedBox(
             height: 20,
           ),
-          StoriesSection(),
+          storiesSection(),
           const SizedBox(
             height: 30,
           ),
-          LatestVideosSection(),
+          latestVideosSection(),
           const SizedBox(
             height: 20,
           ),
-          LatestNewsSection(),
+          latestNewsSection(),
           const SizedBox(
             height: 70,
           ),
@@ -311,7 +311,7 @@ class _BlogPageState extends State<BlogPage> {
     );
   }
 
-  Widget LatestNewsSection() {
+  Widget latestNewsSection() {
     return UnconstrainedBox(
       child: Container(
         padding: const EdgeInsets.all(10),
@@ -335,7 +335,7 @@ class _BlogPageState extends State<BlogPage> {
     );
   }
 
-  Widget LatestVideosSection() {
+  Widget latestVideosSection() {
     return UnconstrainedBox(
       child: Container(
         padding: const EdgeInsets.all(10),
@@ -359,7 +359,7 @@ class _BlogPageState extends State<BlogPage> {
     );
   }
 
-  Widget StoriesSection() {
+  Widget storiesSection() {
     return UnconstrainedBox(
       child: SizedBox(
         // color: Colors.red,
@@ -381,7 +381,7 @@ class _BlogPageState extends State<BlogPage> {
     );
   }
 
-  Widget PopularTagSection() {
+  Widget popularTagSection() {
     return UnconstrainedBox(
       child: Container(
         width: MediaQuery.of(context).size.width * 0.8,

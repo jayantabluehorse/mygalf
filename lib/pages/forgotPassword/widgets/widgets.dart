@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-Widget TextFeildWidget(controller, hintName) {
+Widget textFeildWidget(controller, hintName) {
   return TextField(
     controller: controller,
     decoration: InputDecoration(

@@ -5,6 +5,13 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:my_galf/components/footer.dart';
 import 'package:my_galf/components/navbar.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:my_galf/components/product_card.dart';
+import 'package:my_galf/pages/cart/cart_controller.dart';
+import 'package:my_galf/pages/product_page/product_controller.dart';
+
+import '../../components/request_callback/request_callback.dart';
+import '../../mobile/screens/components/theme.dart';
+import 'widgets/blogs/blogs.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({Key? key}) : super(key: key);
@@ -15,6 +22,7 @@ class Homepage extends StatefulWidget {
 
 class _HomepageState extends State<Homepage> {
   int currenIndex = -1;
+
   void updateLocation(index) {
     setState(() {
       currenIndex = index;
@@ -24,6 +32,14 @@ class _HomepageState extends State<Homepage> {
   final ScrollController _brandscrollController = ScrollController();
 
   final ScrollController _userSpeksController = ScrollController();
+  final ProductController _productController = Get.put(ProductController());
+  final CartController _cartController = Get.put(CartController());
+
+  @override
+  void initState() {
+    super.initState();
+    // _productController.fetchProducts();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,84 +51,272 @@ class _HomepageState extends State<Homepage> {
             : currentWidth >= 500 && currentWidth <= 1100
                 ? "medium"
                 : "big";
-    return Scaffold(
-        // appBar: AppBar(
-        //   title: Text("$currentWidth"),
-        // ),
-        body: SizedBox(
-      width: double.infinity,
-      child: ListView(
-        children: [
-          //navbar is component
-          Navbar(currentScreen: currentScreen),
-          //todo -  hero carousel shop now button pending
 
-          HeroCarousel(
-            context: context,
-            currentScreen: currentScreen,
-          ),
-          const SizedBox(
-            height: 51,
-          ),
-          //Shop by brads
-          BrandCarousel(
-              context: context, scrollController: _brandscrollController),
-          const SizedBox(
-            height: 58,
-          ),
-          CorporateWellnessProducts(context, currentScreen),
-
-          ProgressArea(context),
-          const SizedBox(
-            height: 28,
-          ),
-          CorporateArea(context),
-          const SizedBox(
-            height: 30,
-          ),
-          CorporateWellness(context),
-          const SizedBox(
-            height: 51,
-          ),
-          TopPicks(
-              context: context,
-              updateLocation: updateLocation,
-              currentIndex: currenIndex),
-          const SizedBox(
-            height: 10,
-          ),
-          FitnessFriday(context),
-          const SizedBox(
-            height: 69,
-          ),
-          MyGalfSpeekers(
-              context: context, scrollController: _userSpeksController),
-          const SizedBox(
-            height: 100,
-          ),
-          AdvantageMygalf(context),
-          const SizedBox(
-            height: 64,
-          ),
-          Blog(context),
-          const SizedBox(
-            height: 64,
-          ),
-          NewsCoverage(context),
-          const SizedBox(
-            height: 0,
-          ),
-          Footer(context: context),
-          // const SizedBox(
-          //   height: 5000,
+    return Title(
+      title: "MyGALF",
+      color: Colors.blue,
+      child: Scaffold(
+          // appBar: AppBar(
+          //   title: Text("$currentWidth"),
           // ),
+          appBar: AppBar(
+            backgroundColor: Colors.white,
+            toolbarHeight: 115,
+            elevation: 0,
+            flexibleSpace:
+                Navbar(currentScreen: currentScreen, selected: 'home'),
+          ),
+          body: Obx(
+            () => Stack(
+              children: [
+                SizedBox(
+                  width: double.infinity,
+                  child: ListView(
+                    children: [
+                      //navbar is component
+                      // Navbar(currentScreen: currentScreen),
+                      //todo -  hero carousel shop now button pending
+                      // SizedBox(
+                      //     height: 200,
+                      //     width: 200,
+                      //     child: Image.asset("assets/images/loader_big.gif")),
+                      heroCarousel(
+                        context: context,
+                        currentScreen: currentScreen,
+                      ),
+                      const SizedBox(
+                        height: 51,
+                      ),
+                      //Shop by brads
+                      brandCarousel(
+                          context: context,
+                          scrollController: _brandscrollController),
+                      const SizedBox(
+                        height: 58,
+                      ),
+                      corporateWellnessProducts(context, currentScreen),
+
+                      progressArea(context),
+                      const SizedBox(
+                        height: 28,
+                      ),
+                      corporateArea(context),
+                      const SizedBox(
+                        height: 30,
+                      ),
+                      corporateWellness(context),
+                      const SizedBox(
+                        height: 51,
+                      ),
+                      topPicks(
+                          context: context,
+                          updateLocation: updateLocation,
+                          currentIndex: currenIndex),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      fitnessFriday(context),
+                      const SizedBox(
+                        height: 69,
+                      ),
+                      myGalfSpeekers(
+                          context: context,
+                          scrollController: _userSpeksController),
+                      const SizedBox(
+                        height: 100,
+                      ),
+                      advantageMygalf(context),
+                      const SizedBox(
+                        height: 64,
+                      ),
+                      Blogs(),
+                      const SizedBox(
+                        height: 64,
+                      ),
+                      newsCoverage(context),
+                      const SizedBox(
+                        height: 0,
+                      ),
+                      Footer(context: context),
+                      // const SizedBox(
+                      //   height: 5000,
+                      // ),
+                    ],
+                  ),
+                ),
+                const RequestCallback()
+              ],
+            ),
+          )),
+    );
+  }
+
+  Widget heroCarousel({required context, required currentScreen}) {
+    return SizedBox(
+      height: 563,
+      // color: Colors.red,
+      child: Stack(
+        children: [
+          CarouselSlider(
+            options: CarouselOptions(
+                height: currentScreen == "xsmall"
+                    ? 200
+                    : currentScreen == "small"
+                        ? 300
+                        : currentScreen == "medium"
+                            ? 400.0
+                            : 500,
+                scrollDirection: Axis.vertical,
+                viewportFraction: 1.0,
+                enableInfiniteScroll: false),
+            items: [
+              1,
+            ].map((i) {
+              return Builder(
+                builder: (BuildContext context) {
+                  return Container(
+                    width: MediaQuery.of(context).size.width,
+                    margin: const EdgeInsets.symmetric(vertical: 5.0),
+                    decoration: const BoxDecoration(
+                        // color: Colors.red,
+                        image: DecorationImage(
+                            fit: BoxFit.fill,
+                            image: AssetImage("assets/images/hero.jpg"))),
+                  );
+                },
+              );
+            }).toList(),
+          ),
+          Positioned(
+            top: 100,
+            left: 155,
+            child: SizedBox(
+              // color: Colors.red,
+              width: MediaQuery.of(context).size.width * 0.3,
+              // height: 60,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Corporate Wellness Made Fun & Easy",
+                    // style: Theme.of(context).textTheme.headline1,
+                    style: GoogleFonts.rubik(
+                      textStyle: const TextStyle(
+                        fontStyle: FontStyle.italic,
+                        fontSize: 45,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF1A3E4E),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 31,
+                  ),
+                  Text(
+                    "Choose from hundreds of workouts, healthy recipes, relaxing meditations, and expert articles, for a whole body and mind approach to feeling great",
+                    style: GoogleFonts.rubik(
+                        textStyle: const TextStyle(
+                            fontStyle: FontStyle.italic,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w400,
+                            color: Color(0xFF1C3844))),
+                  ),
+                  const SizedBox(
+                    height: 31,
+                  ),
+                  SizedBox(
+                    width: 170,
+                    height: 54,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF2F7FDC),
+                          shape: ContinuousRectangleBorder(
+                              borderRadius: BorderRadius.circular(5))),
+                      onPressed: () {
+                        Get.toNamed('/products');
+                      },
+                      child: const Text(
+                        "Shop Now",
+                        style: TextStyle(
+                            fontStyle: FontStyle.italic,
+                            fontSize: 15,
+                            // fontWeight: FontWeight,
+                            color: Color(0xFFFFFFFF)),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          )
         ],
       ),
-    ));
+    );
+  }
+
+  Widget topPicks(
+      {required context, required updateLocation, required currentIndex}) {
+    return SizedBox(
+      // color: Colors.red,
+      // height: 20,00
+
+      child: Column(children: [
+        Text("MyGALF Top Picks",
+            style: GoogleFonts.rubik(
+              textStyle: const TextStyle(
+                  fontSize: 35,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF1A3E4E)),
+            )),
+        const SizedBox(
+          height: 43,
+        ),
+        Text(
+          "Our experts test and rate hundreds of products each year. We’re updating our roundups all the time, so you always know\n what’s best to buy. See the latest top picks in our most popular products",
+          textAlign: TextAlign.center,
+          style: GoogleFonts.rubik(
+              textStyle: const TextStyle(
+                  fontWeight: FontWeight.w400,
+                  fontSize: 17,
+                  color: Color(0xFF1A3E4E))),
+        ),
+        const SizedBox(
+          height: 43,
+        ),
+        SizedBox(
+          // color: Colors.blue,
+          width: MediaQuery.of(context).size.width * 0.8,
+
+          child: GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisSpacing: 40,
+                  crossAxisCount: 4,
+                  childAspectRatio: 1.2 / 2.0,
+                  mainAxisExtent: 457,
+                  mainAxisSpacing: 50),
+              itemCount: _productController.productList.length > 8
+                  ? 8
+                  : _productController.productList.length,
+              itemBuilder: (BuildContext context, int index) {
+                return Center(
+                    child: ProductCard(
+                  cartController: _cartController,
+                  currenIndex: currentIndex,
+                  index: index,
+                  myProducts: _productController.productList,
+                  productController: _productController,
+                  updateLocation: updateLocation,
+                ));
+              }),
+        )
+      ]),
+    );
   }
 }
 
-Widget CorporateWellnessProducts(context, currentScreen) {
+Widget corporateWellnessProducts(context, currentScreen) {
   return Container(
     height: currentScreen == "big"
         ? 613
@@ -132,7 +336,7 @@ Widget CorporateWellnessProducts(context, currentScreen) {
       children: [
         //left container
         Container(
-          padding: EdgeInsets.all(80),
+          padding: const EdgeInsets.all(80),
           alignment: Alignment.center,
           height: 468,
           width: 650,
@@ -144,18 +348,18 @@ Widget CorporateWellnessProducts(context, currentScreen) {
                 Text(
                   "Corporate Wellness \n Made Fun & Easy",
                   style: GoogleFonts.rubik(
-                    textStyle:
-                        TextStyle(fontWeight: FontWeight.w700, fontSize: 48),
-                    color: Color(0xFF1A3E4E),
+                    textStyle: const TextStyle(
+                        fontWeight: FontWeight.w700, fontSize: 48),
+                    color: const Color(0xFF1A3E4E),
                   ),
                 ),
                 Container(
                     width: 468,
-                    padding: EdgeInsets.all(0),
+                    padding: const EdgeInsets.all(0),
                     child: Text(
-                      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam facilisis ac tellus vel varius. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Donec auctor arcu egestas, tristique enim nec, mollis metus.",
+                      "Recipes to Refuel and Recover after Strength Workouts",
                       style: GoogleFonts.rubik(
-                          color: Color(0xFF1A3E4E),
+                          color: const Color(0xFF1A3E4E),
                           fontSize: 13,
                           fontWeight: FontWeight.w400),
                     )),
@@ -164,15 +368,17 @@ Widget CorporateWellnessProducts(context, currentScreen) {
                     width: 139,
                     height: 48,
                     decoration: BoxDecoration(
-                        color: Color.fromARGB(255, 47, 127, 220),
-                        borderRadius: BorderRadius.circular(10)),
+                        color: const Color.fromARGB(255, 47, 127, 220),
+                        borderRadius: BorderRadius.circular(5)),
                     alignment: Alignment.center,
                     child: Text(
                       "Shop Now",
                       style: GoogleFonts.rubik(color: Colors.white),
                     ),
                   ),
-                  onTap: () {},
+                  onTap: () {
+                    Get.toNamed('/products');
+                  },
                 )
               ]),
         ),
@@ -188,7 +394,7 @@ Widget CorporateWellnessProducts(context, currentScreen) {
               children: [
                 //top contaioner
                 Container(
-                  padding: EdgeInsets.all(20),
+                  padding: const EdgeInsets.all(20),
                   height: 250,
                   // color: Colors.orange,
                   child: Column(
@@ -198,14 +404,14 @@ Widget CorporateWellnessProducts(context, currentScreen) {
                       Text(
                         "The Ultimate Training Watch - Water Proof",
                         style: GoogleFonts.rubik(
-                            textStyle: TextStyle(
+                            textStyle: const TextStyle(
                                 fontSize: 25, fontWeight: FontWeight.w700),
                             color: Colors.white),
                       ),
                       Text(
                         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam facilisis ac tellus vel varius. Vestibulum ante.",
                         style: GoogleFonts.rubik(
-                            textStyle: TextStyle(
+                            textStyle: const TextStyle(
                                 fontSize: 13, fontWeight: FontWeight.w400),
                             color: Colors.white),
                       )
@@ -213,7 +419,7 @@ Widget CorporateWellnessProducts(context, currentScreen) {
                   ),
                 ),
                 //bottom container
-                Container(
+                SizedBox(
                   height: 250,
                   // color: Colors.yellow,
                   child: Column(
@@ -223,14 +429,14 @@ Widget CorporateWellnessProducts(context, currentScreen) {
                       Text(
                         "Work Hard, Run Fast - Flexible & Comfortable",
                         style: GoogleFonts.rubik(
-                            textStyle: TextStyle(
+                            textStyle: const TextStyle(
                                 fontSize: 25, fontWeight: FontWeight.w700),
                             color: Colors.white),
                       ),
                       Text(
                         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam facilisis ac tellus vel varius. Vestibulum ante.",
                         style: GoogleFonts.rubik(
-                            textStyle: TextStyle(
+                            textStyle: const TextStyle(
                                 fontSize: 13, fontWeight: FontWeight.w400),
                             color: Colors.white),
                       )
@@ -245,9 +451,9 @@ Widget CorporateWellnessProducts(context, currentScreen) {
 }
 
 //! multy part widgets created bellow
-Widget NewsCoverage(context) {
+Widget newsCoverage(context) {
   return Container(
-    color: Color.fromARGB(255, 242, 242, 242),
+    color: const Color.fromARGB(255, 242, 242, 242),
     // color: Colors.red,
     // height: 957,
     // width:1080,
@@ -259,14 +465,16 @@ Widget NewsCoverage(context) {
         const SizedBox(
           height: 32,
         ),
-        Text("News Coverage",
-            style: GoogleFonts.rubik(
-              textStyle: TextStyle(
-                fontWeight: FontWeight.w700,
-                fontSize: 35,
-                color: Color(0xFF1A3E4E),
-              ),
-            )),
+        Text(
+          "News Coverage",
+          style: GoogleFonts.rubik(
+            textStyle: const TextStyle(
+              fontWeight: FontWeight.w700,
+              fontSize: 35,
+              color: Color(0xFF1A3E4E),
+            ),
+          ),
+        ),
         const SizedBox(
           height: 30,
         ),
@@ -274,21 +482,22 @@ Widget NewsCoverage(context) {
           "Learn about the latest trends and topics on Corporate\nWellness with the Galf Blog.",
           textAlign: TextAlign.center,
           style: GoogleFonts.rubik(
-              textStyle: TextStyle(fontWeight: FontWeight.w400, fontSize: 18)),
-              // textAlign: Alignment.center,
-              
+              color: const Color(0xFF374651),
+              textStyle:
+                  const TextStyle(fontWeight: FontWeight.w400, fontSize: 18)),
+          // textAlign: Alignment.center,
         ),
         const SizedBox(
           height: 30,
         ),
-        Container(
+        SizedBox(
           width: 1080,
           // color: Colors.blue,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Container(
+              SizedBox(
                 // color: Colors.green,
                 height: 690,
                 width: 329,
@@ -321,7 +530,7 @@ Widget NewsCoverage(context) {
                             ),
                           ),
                           Container(
-                            padding: EdgeInsets.all(10),
+                            padding: const EdgeInsets.all(10),
                             child: const Text(
                               "Lorem ipsum dolor sit amet,\nconsectetur adipiscing elit.",
                               style: TextStyle(
@@ -364,7 +573,7 @@ Widget NewsCoverage(context) {
                             ),
                           ),
                           Container(
-                            padding: EdgeInsets.all(10),
+                            padding: const EdgeInsets.all(10),
                             child: const Text(
                               "Lorem ipsum dolor sit amet,\nconsectetur adipiscing elit2.",
                               style: TextStyle(
@@ -383,7 +592,7 @@ Widget NewsCoverage(context) {
               const SizedBox(
                 width: 5,
               ),
-              Container(
+              SizedBox(
                 width: 725,
                 child: Column(
                   children: [
@@ -414,7 +623,7 @@ Widget NewsCoverage(context) {
                             ),
                           ),
                           Container(
-                            padding: EdgeInsets.all(15),
+                            padding: const EdgeInsets.all(15),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -426,7 +635,7 @@ Widget NewsCoverage(context) {
                                         color: Color(0xFF1A3E4E),
                                       ),
                                     )),
-                                SizedBox(height: 10),
+                                const SizedBox(height: 10),
                                 Text(
                                     "Feel energized and empowerd with our state-of-the-art equipment and inspring classes. transform your bosy and mind with our gym and fitness programs.",
                                     style: GoogleFonts.rubik(
@@ -436,7 +645,7 @@ Widget NewsCoverage(context) {
                                         color: Color(0xFF1A3E4E),
                                       ),
                                     )),
-                                SizedBox(height: 20),
+                                const SizedBox(height: 20),
                                 Text(
                                   "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus sit amet blandit eros. Proin cursus tincidunt nibh, id blandit elit. Vivamus pellentesque ornare sagittis. Donec in tincidunt neque. Etiam ultrices ex vitae efficitur suscipit.",
                                   style: GoogleFonts.rubik(
@@ -447,7 +656,7 @@ Widget NewsCoverage(context) {
                                     ),
                                   ),
                                 ),
-                                SizedBox(height: 20),
+                                const SizedBox(height: 20),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.end,
@@ -491,7 +700,7 @@ Widget NewsCoverage(context) {
           height: 30,
         ),
         Container(
-          padding: EdgeInsets.all(10),
+          padding: const EdgeInsets.all(10),
           child: SizedBox(
               width: 218,
               height: 64,
@@ -511,7 +720,7 @@ Widget NewsCoverage(context) {
   );
 } // news coverage
 
-Widget MyGalfSpeekers({required context, required scrollController}) {
+Widget myGalfSpeekers({required context, required scrollController}) {
   return SizedBox(
     // color: Colors.red,
     child: Column(
@@ -535,9 +744,10 @@ Widget MyGalfSpeekers({required context, required scrollController}) {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(
-                width: 433,
-                height: 262,
+              Expanded(
+                flex: 2,
+                // width: 433,
+                // height: 262,
                 // color: Colors.green,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -589,10 +799,11 @@ Widget MyGalfSpeekers({required context, required scrollController}) {
               const SizedBox(
                 width: 3,
               ),
-              SizedBox(
+              Expanded(
+                flex: 3,
                 // color: const Color.fromARGB(255, 54, 70, 244),
-                height: 479,
-                width: 712,
+                // height: 479,
+                // width: 712,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -618,35 +829,62 @@ Widget MyGalfSpeekers({required context, required scrollController}) {
                             controller: scrollController,
                             scrollDirection: Axis.horizontal,
                             children: [
-                              MyGalfSpeksCard(),
+                              myGalfSpeksCard(
+                                image: "assets/images/Speaker1.png",
+                                text:
+                                    "MyGALF.com is the best site for all your wellness products. From my Garmin Forerunner to my Foodstrong Nutrition, they have it all!! Even my trainees prefer to source their fitness needs from them!",
+                              ),
                               const SizedBox(
                                 width: 18,
                               ),
-                              MyGalfSpeksCard(),
+                              myGalfSpeksCard(
+                                  image: "assets/images/Speaker2.png",
+                                  text:
+                                      "Relied on MyGALF.com for purchasing my Garmin! Dlighted wiht the ease of transactionand quick delivery. Genuine puoducts frim trusted brands ensures my loyalty to them-Healthtrek, Foodstrong, Fast&Up are some of the brands I've already purchased!"),
                               const SizedBox(
                                 width: 18,
                               ),
-                              MyGalfSpeksCard(),
+                              myGalfSpeksCard(
+                                  image: "assets/images/Speaker3.png",
+                                  text:
+                                      "Gifting myself the Garmon Venu Sq Music from MyGALF was a great decision! Genuine products, amazing price points, quick delivery!! Thir wide chice of wellness products and trusted brands, make them my first choice for any fitness purchase!"),
                               const SizedBox(
                                 width: 18,
                               ),
-                              MyGalfSpeksCard(),
+                              myGalfSpeksCard(
+                                  image: "assets/images/Speaker4.png",
+                                  text:
+                                      "Surprising my wife with a Garmon Instinct Seafoam for her first HM from the MyGALF.com wellness website was a wise decision. Wide choice of trusted brands, ease of transaction and all in all a great shopping experience!"),
                               const SizedBox(
                                 width: 18,
                               ),
-                              MyGalfSpeksCard(),
+                              myGalfSpeksCard(
+                                  image: "assets/images/Speaker5.png",
+                                  text:
+                                      "My decision to surprise my husband with a Garmon Instinct from MyGALF.com was definitely a brilliant idea! Great pricing, prompt delivery and expery guidance made the decision so easy for me!"),
                               const SizedBox(
                                 width: 18,
                               ),
-                              MyGalfSpeksCard(),
+                              myGalfSpeksCard(
+                                  image: "assets/images/Speaker6.png",
+                                  text:
+                                      "Decided on MyGALF.com for purchasing a Garmon to be gifted. The multiple payment options, super quick 36- hour delivery, and great offers definitely made it a great overall experience. Highly recommend them for your wellness shopping!"),
                               const SizedBox(
                                 width: 18,
                               ),
-                              MyGalfSpeksCard(),
+                              myGalfSpeksCard(
+                                image: "assets/images/Speaker7.png",
+                                text:
+                                    "It was a wonderful experience to buy the Kipchoge Edition COROS Pace 2 from MyGALF. They managed to arrange this limited edition watch for me in India, that too with a great offer! Absolutely live my COROS, and amazed with the superlative experience with this multi-brand fitness website!",
+                              ),
                               const SizedBox(
                                 width: 18,
                               ),
-                              MyGalfSpeksCard(),
+                              myGalfSpeksCard(
+                                image: "assets/images/Speaker8.png",
+                                text:
+                                    "Loved my Garmin Venu Sq from MyGALF! Their apt guidance and prompt service has been impressive! Check out their site for great prices on all your favourite brands. It's my go-to wellness market place for my hydrantlon and nutrition needs too!",
+                              ),
                               const SizedBox(
                                 width: 18,
                               ),
@@ -661,7 +899,7 @@ Widget MyGalfSpeekers({required context, required scrollController}) {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          GestureDetector(
+                          InkWell(
                               onTap: () {
                                 scrollController.animateTo(
                                   scrollController.offset - 300.0,
@@ -683,7 +921,7 @@ Widget MyGalfSpeekers({required context, required scrollController}) {
                           const SizedBox(
                             width: 56,
                           ),
-                          GestureDetector(
+                          InkWell(
                               onTap: () {
                                 scrollController.animateTo(
                                   scrollController.offset + 300.0,
@@ -716,366 +954,115 @@ Widget MyGalfSpeekers({required context, required scrollController}) {
   );
 }
 
-Widget MyGalfSpeksCard() {
-  return Container(
-      width: 225,
-      height: 280,
-      // color: Color.fromARGB(255, 244, 15, 15),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            height: 193,
-            width: 225,
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                fit: BoxFit.cover,
-                image: AssetImage("assets/images/speaks.png"),
-              ),
-            ),
-          ),
-          // Container(
-          //   height: 30,
-          //   decoration: BoxDecoration(
-          //   color: Colors.red,
-                
-          //   image:DecorationImage(fit: BoxFit.cover,image: AssetImage("assets/images/cotation.png"))
-
-          //   ),
-          // ),
-          const SizedBox(
-            height: 5,
-          ),
-          SizedBox(
-            height: 140,
-            width: 225,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tincidunt justo, at semper eros. Nullam bibendum arcu at arcu iaculis, quis ullamcorper massa sodales.",
-                  style: GoogleFonts.rubik(
-                    textStyle: const TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w400,
-                      color: Color(0xFF1C3844),
-                    ),
-                  ),
-                  softWrap: true,
-                  maxLines: 5,
-
-                  // overflow: TextOverflow.clip,
-                ),
-                const SizedBox(
-                  height: 7,
-                ),
-                Text(
-                  "Rohith Raj",
-                  textAlign: TextAlign.start,
-                  style: GoogleFonts.rubik(
-                      textStyle: const TextStyle(
-                    color: Color(0xFF374651),
-                    fontSize: 17,
-                    fontWeight: FontWeight.w500,
-                  )),
-                ),
-                Text("Director@ Stonepeek.pvt",
-                    textAlign: TextAlign.start,
-                    style: GoogleFonts.rubik(
-                      textStyle: const TextStyle(
-                        color: Color(0xFF374651),
-                        fontSize: 17,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    )),
-                const SizedBox(
-                  height: 4,
-                ),
-                SizedBox(
-                  height:20,
-                  width: 62,
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 23,
-                        height: 23,
-                        decoration: const BoxDecoration(
-                            image: DecorationImage(
-                                image:
-                                    AssetImage("assets/icons/linkedin.png"))),
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Container(
-                        width: 23,
-                        height: 23,
-                        decoration: const BoxDecoration(
-                            image: DecorationImage(
-                                image: AssetImage("assets/icons/youtube.png"))),
-                      ),
-                    ],
-                  ),
-                )
-              ],
-            ),
-          ),
-        ],
-      ));
-}
-
-Widget Blog(context) {
+Widget myGalfSpeksCard({required String image, required String text}) {
   return SizedBox(
-    // height: 800,
-    width: MediaQuery.of(context).size.width * 0.9,
+    width: 225,
+    height: 280,
+    // color: Color.fromARGB(255, 244, 15, 15),
     child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Container(
+          height: 193,
+          width: 225,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              fit: BoxFit.contain,
+              image: AssetImage(image),
+            ),
+          ),
+        ),
+        // Container(
+        //   height: 30,
+        //   decoration: BoxDecoration(
+        //   color: Colors.red,
+
+        //   image:DecorationImage(fit: BoxFit.cover,image: AssetImage("assets/images/cotation.png"))
+
+        //   ),
+        // ),
         const SizedBox(
-          height: 20,
-        ),
-        const Text(
-          "Blogs",
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
-        ),
-        const SizedBox(
-          height: 15,
-        ),
-        const Text(
-          "Learn about the latest trends and topics on Corporate\nWellness with the Galf Blog.",
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(
-          height: 15,
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              // color: Colors.green,
-              height: 600,
-              width: 350,
-              child: Column(
-                children: [
-                  SizedBox(
-                    // color: Colors.red,
-                    height: 270,
-                    width: 300,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          height: 200,
-                          width: 300,
-                          decoration: const BoxDecoration(
-                            image: DecorationImage(
-                              fit: BoxFit.cover,
-                              image:
-                                  AssetImage("assets/images/Rectangle_43.png"),
-                            ),
-                          ),
-                        ),
-                        const Text(
-                          "Lorem ipsum dolor sit amet,\nconsectetur adipiscing elit.",
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    // color: Colors.red,
-                    height: 270,
-                    width: 300,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          height: 200,
-                          width: 300,
-                          decoration: const BoxDecoration(
-                            image: DecorationImage(
-                              fit: BoxFit.cover,
-                              image:
-                                  AssetImage("assets/images/Rectangle_43.png"),
-                            ),
-                          ),
-                        ),
-                        const Text(
-                          "Lorem ipsum dolor sit amet,\nconsectetur adipiscing elit.",
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        )
-                      ],
-                    ),
-                  )
-                ],
-              ),
-            ),
-            const SizedBox(
-              width: 5,
-            ),
-            SizedBox(
-              // color: Color.fromARGB(255, 62, 79, 63),
-              height: 600,
-              width: 450,
-              child: Column(
-                children: [
-                  SizedBox(
-                    // color: Colors.red,
-                    height: 290,
-                    width: 450,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          height: 230,
-                          width: 450,
-                          decoration: const BoxDecoration(
-                            image: DecorationImage(
-                              fit: BoxFit.cover,
-                              image: AssetImage("assets/images/Group_106.png"),
-                            ),
-                          ),
-                        ),
-                        const Text(
-                          "Lorem ipsum dolor sit amet,\nconsectetur adipiscing elit.",
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    // color: Colors.red,
-                    height: 290,
-                    width: 450,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          height: 230,
-                          width: 450,
-                          decoration: const BoxDecoration(
-                            image: DecorationImage(
-                              fit: BoxFit.cover,
-                              image: AssetImage("assets/images/Group_106.png"),
-                            ),
-                          ),
-                        ),
-                        const Text(
-                          "Lorem ipsum dolor sit amet,\nconsectetur adipiscing elit.",
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(
-              width: 5,
-            ),
-            SizedBox(
-              // color: Colors.green,
-              height: 600,
-              width: 350,
-              child: Column(
-                children: [
-                  SizedBox(
-                    // color: Colors.red,
-                    height: 270,
-                    width: 300,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          height: 200,
-                          width: 300,
-                          decoration: const BoxDecoration(
-                            image: DecorationImage(
-                              fit: BoxFit.cover,
-                              image:
-                                  AssetImage("assets/images/Rectangle_43.png"),
-                            ),
-                          ),
-                        ),
-                        const Text(
-                          "Lorem ipsum dolor sit amet,\nconsectetur adipiscing elit.",
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    // color: Colors.red,
-                    height: 270,
-                    width: 300,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          height: 200,
-                          width: 300,
-                          decoration: const BoxDecoration(
-                            image: DecorationImage(
-                              fit: BoxFit.cover,
-                              image:
-                                  AssetImage("assets/images/Rectangle_43.png"),
-                            ),
-                          ),
-                        ),
-                        const Text(
-                          "Lorem ipsum dolor sit amet,\nconsectetur adipiscing elit.",
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        )
-                      ],
-                    ),
-                  )
-                ],
-              ),
-            ),
-            const SizedBox(
-              width: 5,
-            ),
-          ],
-        ),
-        const SizedBox(
-          height: 30,
+          height: 5,
         ),
         SizedBox(
-            width: 218,
-            height: 64,
-            child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF2F7FDC)),
-                onPressed: () {},
-                child: Text(
-                  "View More",
+          height: 140,
+          width: 225,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                text,
+                style: GoogleFonts.rubik(
+                  textStyle: const TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w400,
+                    color: Color(0xFF1C3844),
+                  ),
+                ),
+                softWrap: true,
+                maxLines: 5,
+
+                // overflow: TextOverflow.clip,
+              ),
+              const SizedBox(
+                height: 7,
+              ),
+              Text(
+                "Rohith Raj",
+                textAlign: TextAlign.start,
+                style: GoogleFonts.rubik(
+                    textStyle: const TextStyle(
+                  color: Color(0xFF374651),
+                  fontSize: 17,
+                  fontWeight: FontWeight.w500,
+                )),
+              ),
+              Text("Director@ Stonepeek.pvt",
+                  textAlign: TextAlign.start,
                   style: GoogleFonts.rubik(
-                      textStyle: const TextStyle(
-                          fontSize: 19, fontWeight: FontWeight.w700)),
-                )))
+                    textStyle: const TextStyle(
+                      color: Color(0xFF374651),
+                      fontSize: 17,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  )),
+              const SizedBox(
+                height: 4,
+              ),
+              SizedBox(
+                height: 20,
+                width: 62,
+                child: Row(
+                  children: [
+                    Container(
+                      width: 23,
+                      height: 23,
+                      decoration: const BoxDecoration(
+                          image: DecorationImage(
+                              image: AssetImage("assets/icons/linkedin.png"))),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Container(
+                      width: 23,
+                      height: 23,
+                      decoration: const BoxDecoration(
+                          image: DecorationImage(
+                              image: AssetImage("assets/icons/youtube.png"))),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
+        ),
       ],
     ),
   );
 }
 
-Widget AdvantageMygalf(context) {
+Widget advantageMygalf(context) {
   return Container(
     height: 359,
     width: MediaQuery.of(context).size.width,
@@ -1143,7 +1130,7 @@ Widget AdvantageMygalf(context) {
   );
 }
 
-Widget FitnessFriday(context) {
+Widget fitnessFriday(context) {
   return Container(
     width: MediaQuery.of(context).size.width,
     height: 483,
@@ -1226,7 +1213,7 @@ Widget FitnessFriday(context) {
                         ),
                         onPressed: () {},
                         child: const Text(
-                          "View All",
+                          "View Details",
                           style: TextStyle(
                             color: Colors.white,
                           ),
@@ -1317,7 +1304,7 @@ Widget FitnessFriday(context) {
                         ),
                         onPressed: () {},
                         child: const Text(
-                          "View All",
+                          "View Details",
                           style: TextStyle(
                             color: Colors.white,
                           ),
@@ -1339,7 +1326,9 @@ Widget FitnessFriday(context) {
             child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF2F7FDC)),
-                onPressed: () {},
+                onPressed: () {
+                  Get.toNamed('/services');
+                },
                 child: Text(
                   "View More",
                   style: GoogleFonts.rubik(
@@ -1356,78 +1345,6 @@ Widget FitnessFriday(context) {
 // Widget Footer(context) {
 //   return
 // }
-
-Widget TopPicks(
-    {required context, required updateLocation, required currentIndex}) {
-  return SizedBox(
-    // color: Colors.red,
-    // height: 20,00
-
-    child: Column(children: [
-      Text("MyGALF Top Picks",
-          style: GoogleFonts.rubik(
-            textStyle: const TextStyle(
-                fontSize: 35,
-                fontWeight: FontWeight.w700,
-                color: Color(0xFF1A3E4E)),
-          )),
-      const SizedBox(
-        height: 43,
-      ),
-      Text(
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit\n amet tincidunt justo, at semper eros. ",
-        textAlign: TextAlign.center,
-        style: GoogleFonts.rubik(
-            textStyle: const TextStyle(
-                fontWeight: FontWeight.w400,
-                fontSize: 17,
-                color: Color(0xFF1A3E4E))),
-      ),
-      const SizedBox(
-        height: 43,
-      ),
-      SizedBox(
-        // color: Colors.blue,
-        width: MediaQuery.of(context).size.width * 0.8,
-
-        child: GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 4,
-              crossAxisSpacing: 5,
-              mainAxisSpacing: 20,
-              mainAxisExtent: 457, // here set custom Height You Want
-            ),
-            itemCount: 8,
-            itemBuilder: (BuildContext context, int index) {
-              //  GridView.count(
-              //   physics: const NeverScrollableScrollPhysics(),
-              //   crossAxisCount: 4,
-              //   crossAxisSpacing: 1.0,
-              //   mainAxisSpacing: 20,
-              //   // childAspectRatio: 1 / 3,
-
-              //   // mainAxisSpacing: 2.0,/
-              //   children:
-
-              //   List.generate(3, (index) {
-
-              return Center(
-                child: TopPickCard(
-                    context: context,
-                    index: index,
-                    updateLocation: updateLocation,
-                    currentIndex: currentIndex),
-              );
-            }),
-      ),
-      const SizedBox(
-        height: 89,
-      )
-    ]),
-  );
-}
 
 // Widget TopPickCard(
 //     {required context,
@@ -1614,7 +1531,7 @@ Widget TopPicks(
 //     ),
 //   );
 // }
-Widget TopPickCard(
+Widget topPickCard(
     {required context,
     required index,
     required updateLocation,
@@ -1687,9 +1604,9 @@ Widget TopPickCard(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Expanded(
-            child: GestureDetector(
+            child: InkWell(
               onTap: () {
-                Get.toNamed("/pdp");
+                Get.toNamed("/products/$index");
               },
               child: Container(
                 height: 150,
@@ -1729,8 +1646,7 @@ Widget TopPickCard(
           const SizedBox(
             height: 8,
           ),
-          Container(
-              child: Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -1755,12 +1671,11 @@ Widget TopPickCard(
                 direction: Axis.horizontal,
               ),
             ],
-          )),
+          ),
           const SizedBox(
             height: 4,
           ),
-          Container(
-              child: Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: const [
@@ -1787,7 +1702,7 @@ Widget TopPickCard(
                     fontSize: 10),
               ),
             ],
-          )),
+          ),
           currentIndex == index
               ? Container(
                   padding: const EdgeInsets.only(top: 3, bottom: 10),
@@ -1834,7 +1749,7 @@ Widget TopPickCard(
   );
 }
 
-Widget CorporateWellness(context) {
+Widget corporateWellness(context) {
   return Container(
     decoration: const BoxDecoration(
         image: DecorationImage(
@@ -1914,18 +1829,19 @@ Widget CorporateWellness(context) {
                   width: 211,
                   height: 48,
                   child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF2F7FDC),
-                        // shape: StadiumBorder()
-                      ),
-                      onPressed: () {},
-                      child: Text("Schdule a free demo",
-                          style: GoogleFonts.robotoSerif(
-                            textStyle: const TextStyle(
-                                fontWeight: FontWeight.w700,
-                                fontSize: 12,
-                                color: Color(0xFFFFFFFF)),
-                          ))),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF2F7FDC),
+                      // shape: StadiumBorder()
+                    ),
+                    onPressed: () {},
+                    child: const Text(
+                      "Schdule a free demo",
+                      style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 13,
+                          color: Colors.white),
+                    ),
+                  ),
                 ),
                 const SizedBox(
                   width: 13,
@@ -1934,19 +1850,19 @@ Widget CorporateWellness(context) {
                   height: 48,
                   width: 180,
                   child: OutlinedButton(
-                      style: OutlinedButton.styleFrom(
-                        side: const BorderSide(
-                            width: 2, color: Color(0xFF2F7FDC)),
-                      ),
-                      onPressed: () {},
-                      child: Text(
-                        "Start free trial",
-                        style: GoogleFonts.robotoSerif(
-                            textStyle: const TextStyle(
-                                fontWeight: FontWeight.w700,
-                                fontSize: 13,
-                                color: Color(0xFF2F7FDC))),
-                      )),
+                    style: OutlinedButton.styleFrom(
+                      side:
+                          const BorderSide(width: 2, color: Color(0xFF2F7FDC)),
+                    ),
+                    onPressed: () {},
+                    child: const Text(
+                      "Start free trial",
+                      style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 13,
+                          color: Color(0xFF2F7FDC)),
+                    ),
+                  ),
                 )
               ],
             )
@@ -1958,7 +1874,7 @@ Widget CorporateWellness(context) {
   );
 }
 
-Widget CorporateArea(context) {
+Widget corporateArea(context) {
   return SizedBox(
     height: 550,
     child: Column(
@@ -2015,13 +1931,13 @@ Widget CorporateArea(context) {
   );
 }
 
-Widget ProgressArea(context) {
+Widget progressArea(context) {
   return SizedBox(
     // height: 700,
     width: MediaQuery.of(context).size.width,
     child: Stack(
       children: [
-        ProgressCard(context),
+        progressCard(context),
         Positioned(
             top: 163,
             left: 0,
@@ -2176,14 +2092,13 @@ Widget ProgressArea(context) {
   );
 }
 
-Widget ProgressCard(context) {
+Widget progressCard(context) {
   return Column(
     children: [
       Container(
         height: 332,
         width: MediaQuery.of(context).size.width,
         decoration: const BoxDecoration(
-            // color: Colors.red,
             image: DecorationImage(
                 fit: BoxFit.fill,
                 image: AssetImage("assets/images/blue_background.png"))),
@@ -2207,11 +2122,12 @@ Widget ProgressCard(context) {
               "Revolutionizing employee wellness journeys around the globe.\nKickstart yours today & get and earn money",
               textAlign: TextAlign.center,
               style: GoogleFonts.rubik(
-                  textStyle: const TextStyle(
-                color: Color(0xFFFFFFFF),
-                fontSize: 18,
-                fontWeight: FontWeight.w400,
-              )),
+                textStyle: const TextStyle(
+                  color: Color(0xFFFFFFFF),
+                  fontSize: 18,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
             ),
             const SizedBox(
               height: 35,
@@ -2358,78 +2274,17 @@ Widget ProgressCard(context) {
   );
 }
 
-Widget HeroCarousel({required context, required currentScreen}) {
-  return SizedBox(
-    height: 563,
-    // color: Colors.red,
-    child: Stack(
-      children: [
-        CarouselSlider(
-          options: CarouselOptions(
-              height: currentScreen == "xsmall"
-                  ? 200
-                  : currentScreen == "small"
-                      ? 300
-                      : currentScreen == "medium"
-                          ? 400.0
-                          : 500,
-              scrollDirection: Axis.vertical,
-              viewportFraction: 1.0,
-              enableInfiniteScroll: false),
-          items: [
-            1,
-          ].map((i) {
-            return Builder(
-              builder: (BuildContext context) {
-                return Container(
-                  width: MediaQuery.of(context).size.width,
-                  margin: const EdgeInsets.symmetric(vertical: 5.0),
-                  decoration: const BoxDecoration(
-                      // color: Colors.red,
-                      image: DecorationImage(
-                          fit: BoxFit.fill,
-                          image: AssetImage("assets/images/hero.jpg"))),
-                );
-              },
-            );
-          }).toList(),
-        ),
-        Positioned(
-          top: 285,
-          left: 155,
-          child: SizedBox(
-            width: 200,
-            height: 60,
-            child: SizedBox(
-              width: 170,
-              height: 54,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF2F7FDC),
-                    shape: ContinuousRectangleBorder(
-                        borderRadius: BorderRadius.circular(8))),
-                onPressed: () {},
-                child: const Text("Shop Now"),
-              ),
-            ),
-          ),
-        )
-      ],
-    ),
-  );
-}
-
-Widget BrandCard({required context, required index, required data}) {
+Widget brandCard({required context, required index, required data}) {
   return MouseRegion(
     cursor: SystemMouseCursors.click,
-    child: GestureDetector(
+    child: InkWell(
       onTap: () {
         Get.toNamed("/products");
       },
       child: Container(
         height: 343,
-        width: 241,
-        margin: const EdgeInsets.all(10),
+        width: MediaQuery.of(context).size.width / 5.9,
+        margin: const EdgeInsets.only(top: 10, bottom: 10, right: 10),
         child: Column(
           children: [
             Image.asset(
@@ -2489,7 +2344,7 @@ Widget BrandCard({required context, required index, required data}) {
   );
 }
 
-Widget BrandCarousel({required context, required scrollController}) {
+Widget brandCarousel({required context, required scrollController}) {
   const List data = [
     {
       "mainimage": "assets/images/tacx_body.png",
@@ -2539,10 +2394,11 @@ Widget BrandCarousel({required context, required scrollController}) {
       Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const SizedBox(
+          Container(
+            color: Colors.blue,
             width: 30,
           ),
-          GestureDetector(
+          InkWell(
             onTap: () {
               scrollController.animateTo(
                 scrollController.offset - 300.0,
@@ -2562,21 +2418,24 @@ Widget BrandCarousel({required context, required scrollController}) {
               ),
             ),
           ),
-          SizedBox(
-              height: 343,
-              width: MediaQuery.of(context).size.width * 0.69,
-              child: ListView.builder(
-                itemCount: data.length,
-                controller: scrollController,
-                scrollDirection: Axis.horizontal,
-                itemBuilder: (context, index) {
-                  return BrandCard(context: context, index: index, data: data);
-                },
-              )),
-          const SizedBox(
-            width: 30,
+          Container(
+            alignment: Alignment.center,
+            height: 343,
+            width: MediaQuery.of(context).size.width / 1.4,
+            child: ListView.builder(
+              itemCount: data.length,
+              controller: scrollController,
+              scrollDirection: Axis.horizontal,
+              itemBuilder: (context, index) {
+                return brandCard(context: context, index: index, data: data);
+              },
+            ),
           ),
-          GestureDetector(
+          Container(
+            color: Colors.blue,
+            width: 10,
+          ),
+          InkWell(
             onTap: () {
               scrollController.animateTo(
                 scrollController.offset + 300.0,

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../components/footer.dart';
 import '../../components/navbar.dart';
+import '../../components/request_callback/request_callback.dart';
 import './download_app_controller.dart';
 
 class DownloadAppPage extends StatefulWidget {
@@ -28,44 +29,50 @@ class _DownloadAppPageState extends State<DownloadAppPage> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         toolbarHeight: 115,
-        flexibleSpace: Navbar(currentScreen: currentScreen),
+        flexibleSpace:
+            Navbar(currentScreen: currentScreen, selected: 'download app'),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            _downloadAppUpperSection(
-                context: context, currentScreen: currentScreen),
-            const SizedBox(
-              height: 120,
-            ),
-            SizedBox(
-              height: 2200,
-              child: Stack(children: [
-                Positioned(
-                  top: 1600,
-                  child:
-                      _shopUxUi(context: context, currentScreen: currentScreen),
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Column(
+              children: [
+                _downloadAppUpperSection(
+                    context: context, currentScreen: currentScreen),
+                const SizedBox(
+                  height: 120,
                 ),
-                Positioned(
-                    top: 450,
-                    child: _createEventsUxUi(
-                        context: context, currentScreen: currentScreen)),
-                Positioned(
-                    top: 1030,
-                    child: _eventsUxUi(
-                        context: context, currentScreen: currentScreen)),
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  // height: 290,
-                  child: _fitnessLoungeUxUi(
-                      context: context, currentScreen: currentScreen),
+                SizedBox(
+                  height: 2200,
+                  child: Stack(children: [
+                    Positioned(
+                      top: 1600,
+                      child: _shopUxUi(
+                          context: context, currentScreen: currentScreen),
+                    ),
+                    Positioned(
+                        top: 450,
+                        child: _createEventsUxUi(
+                            context: context, currentScreen: currentScreen)),
+                    Positioned(
+                        top: 1030,
+                        child: _eventsUxUi(
+                            context: context, currentScreen: currentScreen)),
+                    Positioned(
+                      top: 0,
+                      left: 0,
+                      // height: 290,
+                      child: _fitnessLoungeUxUi(
+                          context: context, currentScreen: currentScreen),
+                    ),
+                  ]),
                 ),
-              ]),
+                Footer(context: context),
+              ],
             ),
-            Footer(context: context),
-          ],
-        ),
+          ),
+          const RequestCallback()
+        ],
       ),
     );
   }
@@ -235,7 +242,7 @@ class _DownloadAppPageState extends State<DownloadAppPage> {
             const SizedBox(
               width: 100,
             ),
-            Container(
+            SizedBox(
               width: 400,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,

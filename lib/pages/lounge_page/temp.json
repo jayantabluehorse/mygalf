@@ -1,0 +1,101 @@
+{
+    "id": 4,
+    "attributes": {
+        "Title": "Don’t Sweat It: Our Guide To Exercising Outside",
+        "Slug": "don-t-sweat-it-our-guide-to-exercising-outside",
+        "createdAt": "2023-02-08T12:20:13.990Z",
+        "updatedAt": "2023-02-08T12:20:17.008Z",
+        "publishedAt": "2023-02-08T12:20:16.995Z",
+        "shortDescription": "According to the Centers for Disease Control and Prevention (CDC), excessive heat exposure caused 8,015 deaths in the United States from 1979-2003. For many, summer offers the best opportunity to get your workout in outdoors but harsh heat can pose a real threat to your health and wellbeing. Planning ahead will keep your outdoor workouts safe and fun.\n\nHeat-related illnesses, including heat exhaustion and heat stroke, occur when your body can’t cool itself properly. In extreme cases, overheating can hurt the brain and other vital organs. Sweat normally keeps us cool, but in some cases, sweat just can’t keep up with your body.\n\nLearn all about exercising outside with these helpful tips!",
+        "metaDescription": "no",
+        "description": "According to the Centers for Disease Control and Prevention (CDC), excessive heat exposure caused 8,015 deaths in the United States from 1979-2003. For many, summer offers the best opportunity to get your workout in outdoors but harsh heat can pose a real threat to your health and wellbeing. Planning ahead will keep your outdoor workouts safe and fun.\n\nHeat-related illnesses, including heat exhaustion and heat stroke, occur when your body can’t cool itself properly. In extreme cases, overheating can hurt the brain and other vital organs. Sweat normally keeps us cool, but in some cases, sweat just can’t keep up with your body.\n\nLearn all about exercising outside with these helpful tips!\n\nPlan for the Heat\nSchedule your outdoor exercise around the coolest part of the day: early in the morning or after nightfall.Take advantage of shaded paths. Wear light-colored, breathable clothing. Choose cotton or moisture-wicking fabrics that allow air to circulate without chafing. Wear a hat, sunglasses, and sports-suitable sunscreen.\n\nStay Hydrated\nWe can’t say this enough: drink more water! In high heat and humid conditions, it’s easy to underestimate how much water you need to drink. The CDC directs you to drink 16-32 oz. of water each hour during heavy exercise in a hot environment. If you have a hard time keeping up with that amount, try using flavored water—add a wedge of lime to your water bottle or try a sports drink. If you aren’t on a salt-restricted diet, you can allow yourself a few more salty snacks (like pretzels and chips and salsa) to replenish the sodium lost through sweat.\n\nDress Appropriately\nExercising outside means you are waving goodbye to the comforts of your indoor gym. For many, that’s the allure—but dressing properly is important. If you plan to break a sweat in a wooded area, put a light jacket over your favorite tank top to make sure you are fully clothed. If you’re working out in a park or on a pathway with little to no shade, make sure to wear a hat and load up on the SPF.\n\nBe Cautious of Overheating\nExercising raises your body temperature, and when the air is hotter than your body, heat can’t dissipate into the air. To make the situation worse, heat gets trapped in dark-colored asphalt and the sun reflects off water, sand and glass, bombarding you with heat from every direction. This environment is ripe for heat-related illness, but with some good sense, you can still enjoy your time outside, without having to pay for it later.\n\nPace Yourself\nFocus on the experience when exercising outdoors and don’t expect to set personal records. To avoid over-working yourself, wear your heart rate monitor and know your target heart rate for your age and fitness level. The American Council on Exercise even provides a heart rate calculator!\n\nFind an Exercise Buddy or Group\nWorking out is always way more fun when you do it with friends. It’s also safer—and when you’re exercising outside, safety is top of mind. There are lots of local exercise groups on Facebook and some Anytime Fitness clubs offer free outdoor workouts in the month of May to kick off a summer of fitness fun. Check with your local Anytime Fitness to see where you can find May Free Workouts!",
+        "author": "Anytime Fitness",
+        "metaTitle": "no",
+        "metaKeyword": "no",
+        "Image": {
+            "data": {
+                "id": 6,
+                "attributes": {
+                    "name": "general fitness 1.jpg",
+                    "alternativeText": null,
+                    "caption": null,
+                    "width": 1050,
+                    "height": 700,
+                    "formats": {
+                        "large": {
+                            "ext": ".jpg",
+                            "url": "/uploads/large_general_fitness_1_92eede50da.jpg",
+                            "hash": "large_general_fitness_1_92eede50da",
+                            "mime": "image/jpeg",
+                            "name": "large_general fitness 1.jpg",
+                            "path": null,
+                            "size": 131.17,
+                            "width": 1000,
+                            "height": 667
+                        },
+                        "small": {
+                            "ext": ".jpg",
+                            "url": "/uploads/small_general_fitness_1_92eede50da.jpg",
+                            "hash": "small_general_fitness_1_92eede50da",
+                            "mime": "image/jpeg",
+                            "name": "small_general fitness 1.jpg",
+                            "path": null,
+                            "size": 43.68,
+                            "width": 500,
+                            "height": 333
+                        },
+                        "medium": {
+                            "ext": ".jpg",
+                            "url": "/uploads/medium_general_fitness_1_92eede50da.jpg",
+                            "hash": "medium_general_fitness_1_92eede50da",
+                            "mime": "image/jpeg",
+                            "name": "medium_general fitness 1.jpg",
+                            "path": null,
+                            "size": 83.96,
+                            "width": 750,
+                            "height": 500
+                        },
+                        "thumbnail": {
+                            "ext": ".jpg",
+                            "url": "/uploads/thumbnail_general_fitness_1_92eede50da.jpg",
+                            "hash": "thumbnail_general_fitness_1_92eede50da",
+                            "mime": "image/jpeg",
+                            "name": "thumbnail_general fitness 1.jpg",
+                            "path": null,
+                            "size": 13.05,
+                            "width": 234,
+                            "height": 156
+                        }
+                    },
+                    "hash": "general_fitness_1_92eede50da",
+                    "ext": ".jpg",
+                    "mime": "image/jpeg",
+                    "size": 144.19,
+                    "url": "/uploads/general_fitness_1_92eede50da.jpg",
+                    "previewUrl": null,
+                    "provider": "local",
+                    "provider_metadata": null,
+                    "createdAt": "2023-02-08T12:15:22.409Z",
+                    "updatedAt": "2023-02-08T12:20:06.373Z"
+                }
+            }
+        },
+        "category": {
+            "data": {
+                "id": 3,
+                "attributes": {
+                    "Title": "General Fitness",
+                    "Slug": "general-fitness",
+                    "createdAt": "2023-02-08T11:55:58.834Z",
+                    "updatedAt": "2023-02-08T11:56:01.621Z",
+                    "publishedAt": "2023-02-08T11:56:01.606Z"
+                }
+            }
+        }
+    }
+}
+
+
+
+
+

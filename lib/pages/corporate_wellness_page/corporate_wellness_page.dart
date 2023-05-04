@@ -5,6 +5,7 @@ import 'package:my_galf/components/navbar.dart';
 import 'package:my_galf/pages/corporate_wellness_page/corporate_wellness_controller.dart';
 
 import '../../components/colors.dart';
+import '../../components/request_callback/request_callback.dart';
 import '../../utils/icons.dart';
 
 class CorporateWellnessPage extends StatefulWidget {
@@ -30,326 +31,332 @@ class _CorporateWellnessPageState extends State<CorporateWellnessPage> {
                 ? "medium"
                 : "big";
     return Scaffold(
-      body: ListView(
-        padding: EdgeInsets.zero,
+      body: Stack(
         children: [
-          Navbar(currentScreen: currentScreen),
-          wellnessEcosystemUpperSection(
-              context: context, currentScreen: currentScreen),
-          const SizedBox(
-            height: 15,
-          ),
-          keyFeatures(
-            context: context,
-            currentScreen: currentScreen,
-            title: 'Key Features',
-          ),
-          Padding(
-            padding: const EdgeInsets.only(
-              top: 8.0,
-              bottom: 35,
-            ),
-            child: Center(
-              child: Container(
-                height: 3,
-                width: 70,
-                color: Colors.blue,
-              ),
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
+          ListView(
+            padding: EdgeInsets.zero,
             children: [
-              SizedBox(
-                height: 30,
-                width: 20,
-                child: ElevatedButton(
-                  style: OutlinedButton.styleFrom(
-                    padding: EdgeInsets.zero,
-                    backgroundColor: Colors.grey,
-                  ),
-                  onPressed: () {
-                    scrollController.animateTo(
-                      scrollController.offset - 300.0,
-                      duration: const Duration(milliseconds: 500),
-                      curve: Curves.ease,
-                    );
-                  },
-                  child: const Icon(
-                    Icons.arrow_back_ios,
-                    color: Colors.white,
-                    size: 15,
+              Navbar(currentScreen: currentScreen, selected: 'wellness'),
+              wellnessEcosystemUpperSection(
+                  context: context, currentScreen: currentScreen),
+              const SizedBox(
+                height: 15,
+              ),
+              keyFeatures(
+                context: context,
+                currentScreen: currentScreen,
+                title: 'Key Features',
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                  top: 8.0,
+                  bottom: 35,
+                ),
+                child: Center(
+                  child: Container(
+                    height: 3,
+                    width: 70,
+                    color: Colors.blue,
                   ),
                 ),
               ),
-              Expanded(
-                child: SizedBox(
-                  height: 110,
-                  width: MediaQuery.of(context).size.width * 0.97,
-                  child: ListView.builder(
-                    padding: const EdgeInsets.only(
-                      left: 5,
-                    ),
-                    controller: scrollController,
-                    shrinkWrap: true,
-                    scrollDirection: Axis.horizontal,
-                    itemCount: xController.featuresList.length,
-                    itemBuilder: (context, index) {
-                      return featuresList(index: index);
-                    },
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 30,
-                width: 20,
-                child: ElevatedButton(
-                  style: OutlinedButton.styleFrom(
-                    padding: EdgeInsets.zero,
-                    backgroundColor: Colors.grey,
-                  ),
-                  child: const Icon(
-                    Icons.arrow_forward_ios,
-                    color: Colors.white,
-                    size: 15,
-                  ),
-                  onPressed: () {
-                    scrollController.animateTo(
-                      scrollController.offset + 300.0,
-                      duration: const Duration(milliseconds: 500),
-                      curve: Curves.ease,
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Container(
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(
-                    "assets/images/carv.png",
-                  ),
-                  fit: BoxFit.fill,
-                ),
-              ),
-              height: 800,
-              width: 200,
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    child: Column(
-                      children: [
-                        const SizedBox(
-                          height: 100,
-                        ),
-                        SizedBox(
-                          child: Image.asset(
-                            "assets/images/mobile.png",
-                          ),
-                        ),
-                      ],
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    height: 30,
+                    width: 20,
+                    child: ElevatedButton(
+                      style: OutlinedButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        backgroundColor: Colors.grey,
+                      ),
+                      onPressed: () {
+                        scrollController.animateTo(
+                          scrollController.offset - 300.0,
+                          duration: const Duration(milliseconds: 500),
+                          curve: Curves.ease,
+                        );
+                      },
+                      child: const Icon(
+                        Icons.arrow_back_ios,
+                        color: Colors.white,
+                        size: 15,
+                      ),
                     ),
                   ),
-                  const SizedBox(
-                    width: 50,
-                  ),
                   Expanded(
-                    child: Column(
-                      // direction: Axis.vertical,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(
-                          height: 100,
+                    child: SizedBox(
+                      height: 110,
+                      width: MediaQuery.of(context).size.width * 0.97,
+                      child: ListView.builder(
+                        padding: const EdgeInsets.only(
+                          left: 5,
                         ),
-                        Row(
+                        controller: scrollController,
+                        shrinkWrap: true,
+                        scrollDirection: Axis.horizontal,
+                        itemCount: xController.featuresList.length,
+                        itemBuilder: (context, index) {
+                          return featuresList(index: index);
+                        },
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 30,
+                    width: 20,
+                    child: ElevatedButton(
+                      style: OutlinedButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        backgroundColor: Colors.grey,
+                      ),
+                      child: const Icon(
+                        Icons.arrow_forward_ios,
+                        color: Colors.white,
+                        size: 15,
+                      ),
+                      onPressed: () {
+                        scrollController.animateTo(
+                          scrollController.offset + 300.0,
+                          duration: const Duration(milliseconds: 500),
+                          curve: Curves.ease,
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage(
+                        "assets/images/carv.png",
+                      ),
+                      fit: BoxFit.fill,
+                    ),
+                  ),
+                  height: 800,
+                  width: 200,
+                  child: Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: Column(
                           children: [
-                            Text(
-                              "Download ",
-                              style: GoogleFonts.rubik(
-                                textStyle: const TextStyle(
-                                  fontSize: 50,
-                                  color: Color.fromARGB(255, 13, 113, 196),
-                                  fontWeight: FontWeight.w700,
-                                  fontStyle: FontStyle.italic,
-                                ),
-                              ),
+                            const SizedBox(
+                              height: 100,
                             ),
-                            Text(
-                              "our",
-                              style: GoogleFonts.rubik(
-                                textStyle: const TextStyle(
-                                  fontSize: 50,
-                                  fontWeight: FontWeight.w700,
-                                  fontStyle: FontStyle.italic,
-                                ),
+                            SizedBox(
+                              child: Image.asset(
+                                "assets/images/mobile.png",
                               ),
                             ),
                           ],
                         ),
-                        Text(
-                          "new app",
-                          style: GoogleFonts.rubik(
-                            textStyle: const TextStyle(
-                              fontSize: 50,
-                              fontWeight: FontWeight.w700,
-                              fontStyle: FontStyle.italic,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Text(
-                          "Manage all Employee Wellness activities with one",
-                          style: GoogleFonts.rubik(
-                            textStyle: const TextStyle(
-                              fontSize: 17,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        Text(
-                          "Subscription Under one Platform",
-                          style: GoogleFonts.rubik(
-                            textStyle: const TextStyle(
-                              fontSize: 17,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 15,
-                        ),
-                        bulletedText(
-                            text:
-                                "Manage all Employee Wellness in one Platform"),
-                        const SizedBox(
-                          height: 8,
-                        ),
-                        bulletedText(
-                            text: "Wellness Surveys, Strategies and Analytics"),
-                        const SizedBox(
-                          height: 8,
-                        ),
-                        bulletedText(
-                          text: "Leadership Dashboard",
-                        ),
-                        const SizedBox(
-                          height: 8,
-                        ),
-                        bulletedText(
-                          text: "Bonus Reward for Employees",
-                        ),
-                        const SizedBox(
-                          height: 8,
-                        ),
-                        bulletedText(
-                          text: "Access to Premium Events",
-                        ),
-                        const SizedBox(
-                          height: 30,
-                        ),
-                        ElevatedButton(
-                          onPressed: () {},
-                          style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            minimumSize: const Size(130, 45),
-                            backgroundColor:
-                                const Color.fromARGB(255, 27, 72, 109),
-                          ),
-                          child: Text(
-                            "JOIN NOW",
-                            style: GoogleFonts.rubik(
-                              textStyle: const TextStyle(
-                                fontStyle: FontStyle.normal,
-                                fontSize: 15,
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Row(
+                      ),
+                      const SizedBox(
+                        width: 50,
+                      ),
+                      Expanded(
+                        child: Column(
+                          // direction: Axis.vertical,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Container(
-                              height: 90,
-                              width: 100,
-                              decoration: const BoxDecoration(
-                                image: DecorationImage(
-                                  fit: BoxFit.fill,
-                                  image: AssetImage(
-                                    "assets/images/qrcode.png",
-                                  ),
-                                ),
-                              ),
-                            ),
                             const SizedBox(
-                              width: 25,
+                              height: 100,
                             ),
-                            Container(
-                              height: 120,
-                              width: 0.8,
-                              color: Colors.grey,
-                            ),
-                            const SizedBox(
-                              width: 25,
-                            ),
-                            Column(
+                            Row(
                               children: [
-                                GestureDetector(
-                                  onTap: () {},
-                                  child: Container(
-                                    height: 40,
-                                    width: 100,
-                                    decoration: const BoxDecoration(
-                                      image: DecorationImage(
-                                        fit: BoxFit.fill,
-                                        image: AssetImage(
-                                            "assets/images/googleplay.png"),
-                                      ),
+                                Text(
+                                  "Download ",
+                                  style: GoogleFonts.rubik(
+                                    textStyle: const TextStyle(
+                                      fontSize: 50,
+                                      color: Color.fromARGB(255, 13, 113, 196),
+                                      fontWeight: FontWeight.w700,
+                                      fontStyle: FontStyle.italic,
                                     ),
                                   ),
                                 ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                GestureDetector(
-                                  onTap: () {},
-                                  child: Container(
-                                    height: 40,
-                                    width: 100,
-                                    decoration: const BoxDecoration(
-                                      image: DecorationImage(
-                                        fit: BoxFit.fill,
-                                        image: AssetImage(
-                                          "assets/images/appstore.png",
-                                        ),
-                                      ),
+                                Text(
+                                  "our",
+                                  style: GoogleFonts.rubik(
+                                    textStyle: const TextStyle(
+                                      fontSize: 50,
+                                      fontWeight: FontWeight.w700,
+                                      fontStyle: FontStyle.italic,
                                     ),
                                   ),
                                 ),
                               ],
                             ),
+                            Text(
+                              "new app",
+                              style: GoogleFonts.rubik(
+                                textStyle: const TextStyle(
+                                  fontSize: 50,
+                                  fontWeight: FontWeight.w700,
+                                  fontStyle: FontStyle.italic,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            Text(
+                              "Manage all Employee Wellness activities with one",
+                              style: GoogleFonts.rubik(
+                                textStyle: const TextStyle(
+                                  fontSize: 17,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            Text(
+                              "Subscription Under one Platform",
+                              style: GoogleFonts.rubik(
+                                textStyle: const TextStyle(
+                                  fontSize: 17,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 15,
+                            ),
+                            bulletedText(
+                                text:
+                                    "Manage all Employee Wellness in one Platform"),
+                            const SizedBox(
+                              height: 8,
+                            ),
+                            bulletedText(
+                                text:
+                                    "Wellness Surveys, Strategies and Analytics"),
+                            const SizedBox(
+                              height: 8,
+                            ),
+                            bulletedText(
+                              text: "Leadership Dashboard",
+                            ),
+                            const SizedBox(
+                              height: 8,
+                            ),
+                            bulletedText(
+                              text: "Bonus Reward for Employees",
+                            ),
+                            const SizedBox(
+                              height: 8,
+                            ),
+                            bulletedText(
+                              text: "Access to Premium Events",
+                            ),
+                            const SizedBox(
+                              height: 30,
+                            ),
+                            ElevatedButton(
+                              onPressed: () {},
+                              style: ElevatedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                minimumSize: const Size(130, 45),
+                                backgroundColor:
+                                    const Color.fromARGB(255, 27, 72, 109),
+                              ),
+                              child: Text(
+                                "JOIN NOW",
+                                style: GoogleFonts.rubik(
+                                  textStyle: const TextStyle(
+                                    fontStyle: FontStyle.normal,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            Row(
+                              children: [
+                                Container(
+                                  height: 90,
+                                  width: 100,
+                                  decoration: const BoxDecoration(
+                                    image: DecorationImage(
+                                      fit: BoxFit.fill,
+                                      image: AssetImage(
+                                        "assets/images/qrcode.png",
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 25,
+                                ),
+                                Container(
+                                  height: 120,
+                                  width: 0.8,
+                                  color: Colors.grey,
+                                ),
+                                const SizedBox(
+                                  width: 25,
+                                ),
+                                Column(
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {},
+                                      child: Container(
+                                        height: 40,
+                                        width: 100,
+                                        decoration: const BoxDecoration(
+                                          image: DecorationImage(
+                                            fit: BoxFit.fill,
+                                            image: AssetImage(
+                                                "assets/images/googleplay.png"),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    GestureDetector(
+                                      onTap: () {},
+                                      child: Container(
+                                        height: 40,
+                                        width: 100,
+                                        decoration: const BoxDecoration(
+                                          image: DecorationImage(
+                                            fit: BoxFit.fill,
+                                            image: AssetImage(
+                                              "assets/images/appstore.png",
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            )
                           ],
-                        )
-                      ],
-                    ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
-          )
+                ),
+              )
+            ],
+          ),
+          const RequestCallback()
         ],
       ),
     );

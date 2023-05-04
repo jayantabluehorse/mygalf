@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:my_galf/services/api.dart';
 
 class AboutController extends GetxController {
   List featuresList = [
@@ -39,4 +40,31 @@ class AboutController extends GetxController {
       "degnation": "Founder and Chief Executive",
     },
   ];
+  var isLoading = true.obs;
+  var leadershipTeamsList = [].obs;
+  @override
+  void onInit() {
+    super.onInit();
+    fetchAboutUsLeadershipTeams();
+  }
+
+  void fetchAboutUsLeadershipTeams() async {
+    try {
+      isLoading(true);
+      var produts = await ApiService().fetchLeadershipTeams(
+        "https://ntez.tezcommerce.com/api/leadership-teams?populate=*",
+        {
+          "data": {"storeId": 1}
+        },
+      );
+
+      leadershipTeamsList.assignAll(produts);
+      // print("-----------------------------------");
+    } catch (e) {
+      print(e);
+    } finally {
+      isLoading(false);
+      print("from contactList $leadershipTeamsList");
+    }
+  }
 }

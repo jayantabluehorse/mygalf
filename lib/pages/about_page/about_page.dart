@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:carousel_slider/carousel_slider.dart';
+import './about_controller.dart';
 import '../../components/footer.dart';
 import '../../components/navbar.dart';
-import './about_controller.dart';
-import '../../utils/icons.dart';
+import '../../components/request_callback/request_callback.dart';
 
 class AboutPage extends StatefulWidget {
   const AboutPage({Key? key}) : super(key: key);
@@ -15,7 +13,9 @@ class AboutPage extends StatefulWidget {
 }
 
 class _AboutPageState extends State<AboutPage> {
-  final xController = Get.put(AboutController());
+  final xController = Get.find<AboutController>();
+
+  // final xController = Get.put(AboutController());
   int isHover = -1;
   int isHoverTwo = -1;
   void updateHover(index) {
@@ -41,60 +41,68 @@ class _AboutPageState extends State<AboutPage> {
             : currentWidth >= 600 && currentWidth <= 1200
                 ? "medium"
                 : "big";
+
     return Scaffold(
-      body: SizedBox(
-        width: double.infinity,
-        child: ListView(
-          shrinkWrap: true,
-          children: <Widget>[
-            Navbar(currentScreen: currentScreen),
-            Container(
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage("assets/images/about_bg.png"),
-                  fit: BoxFit.cover,
+      body: Stack(
+        children: [
+          SizedBox(
+            width: double.infinity,
+            child: ListView(
+              shrinkWrap: true,
+              children: <Widget>[
+                Navbar(currentScreen: currentScreen, selected: 'about'),
+                Container(
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage("assets/images/about_bg.png"),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  child: Column(
+                    children: <Widget>[
+                      const SizedBox(
+                        height: 120,
+                      ),
+                      _whatIsGalf(
+                          context: context, currentScreen: currentScreen),
+                      const SizedBox(
+                        height: 100,
+                      ),
+                      _trueWellness(
+                          context: context,
+                          currentScreen: currentScreen,
+                          isHover: isHover),
+                      const SizedBox(
+                        height: 100,
+                      ),
+                      _ourCompany(
+                          context: context, currentScreen: currentScreen),
+                      const SizedBox(
+                        height: 110,
+                      ),
+                      __advisoryBoard(
+                          context: context,
+                          currentScreen: currentScreen,
+                          scrollController: scrollController),
+                      const SizedBox(
+                        height: 110,
+                      ),
+                      __blogStories(
+                          context: context,
+                          currentScreen: currentScreen,
+                          isHoverTwo: isHoverTwo),
+                      const SizedBox(
+                        height: 110,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              child: Column(
-                children: <Widget>[
-                  const SizedBox(
-                    height: 120,
-                  ),
-                  _whatIsGalf(context: context, currentScreen: currentScreen),
-                  const SizedBox(
-                    height: 100,
-                  ),
-                  _trueWellness(
-                      context: context,
-                      currentScreen: currentScreen,
-                      isHover: isHover),
-                  const SizedBox(
-                    height: 100,
-                  ),
-                  _ourCompany(context: context, currentScreen: currentScreen),
-                  const SizedBox(
-                    height: 110,
-                  ),
-                  __advisoryBoard(
-                      context: context,
-                      currentScreen: currentScreen,
-                      scrollController: scrollController),
-                  const SizedBox(
-                    height: 110,
-                  ),
-                  __blogStories(
-                      context: context,
-                      currentScreen: currentScreen,
-                      isHoverTwo: isHoverTwo),
-                  const SizedBox(
-                    height: 110,
-                  ),
-                ],
-              ),
+                Footer(context: context),
+              ],
             ),
-            Footer(context: context),
-          ],
-        ),
+          ),
+          const RequestCallback()
+        ],
       ),
     );
   }
@@ -248,131 +256,127 @@ class _AboutPageState extends State<AboutPage> {
                       const SizedBox(
                         height: 50,
                       ),
-                      Container(
-                        child: MouseRegion(
-                          onEnter: (event) {
-                            updateHover(1);
-                          },
-                          onExit: (event) {
-                            updateHover(-1);
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.all(30),
-                            margin: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              color: isHover == 1
-                                  ? const Color(0xFF2F7FDC)
-                                  : const Color(0xFFFFFFFF),
-                              boxShadow: const [
-                                BoxShadow(
-                                  blurRadius: 5.0,
+                      MouseRegion(
+                        onEnter: (event) {
+                          updateHover(1);
+                        },
+                        onExit: (event) {
+                          updateHover(-1);
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(30),
+                          margin: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: isHover == 1
+                                ? const Color(0xFF2F7FDC)
+                                : const Color(0xFFFFFFFF),
+                            boxShadow: const [
+                              BoxShadow(
+                                blurRadius: 5.0,
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              isHover == 1
+                                  ? Image.asset(
+                                      "assets/images/about_icon_1.png")
+                                  : Image.asset(
+                                      "assets/images/about_icon_1b.png"),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              Text(
+                                "Wellness Marketplace",
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w700,
+                                  color: isHover == 1
+                                      ? const Color(0xFFFFFFFF)
+                                      : const Color(0xFF314584),
                                 ),
-                              ],
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                isHover == 1
-                                    ? Image.asset(
-                                        "assets/images/about_icon_1.png")
-                                    : Image.asset(
-                                        "assets/images/about_icon_1b.png"),
-                                const SizedBox(
-                                  height: 20,
+                                maxLines: 2,
+                              ),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              Text(
+                                "Opportunity to sell corporate products and merchandise on #GALFShop wellness marketplace",
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                  color: isHover == 1
+                                      ? const Color(0xFFFFFFFF)
+                                      : const Color(0xFF314584),
                                 ),
-                                Text(
-                                  "Wellness Marketplace",
-                                  textAlign: TextAlign.left,
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w700,
-                                    color: isHover == 1
-                                        ? const Color(0xFFFFFFFF)
-                                        : const Color(0xFF314584),
-                                  ),
-                                  maxLines: 2,
-                                ),
-                                const SizedBox(
-                                  height: 20,
-                                ),
-                                Text(
-                                  "Opportunity to sell corporate products and merchandise on #GALFShop wellness marketplace",
-                                  textAlign: TextAlign.left,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w400,
-                                    color: isHover == 1
-                                        ? const Color(0xFFFFFFFF)
-                                        : const Color(0xFF314584),
-                                  ),
-                                  maxLines: 4,
-                                ),
-                              ],
-                            ),
+                                maxLines: 4,
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                      Container(
-                        child: MouseRegion(
-                          onEnter: (event) {
-                            updateHover(2);
-                          },
-                          onExit: (event) {
-                            updateHover(-1);
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.all(30),
-                            margin: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              color: isHover == 2
-                                  ? const Color(0xFF2F7FDC)
-                                  : const Color(0xFFFFFFFF),
-                              boxShadow: const [
-                                BoxShadow(
-                                  blurRadius: 5.0,
+                      MouseRegion(
+                        onEnter: (event) {
+                          updateHover(2);
+                        },
+                        onExit: (event) {
+                          updateHover(-1);
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(30),
+                          margin: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: isHover == 2
+                                ? const Color(0xFF2F7FDC)
+                                : const Color(0xFFFFFFFF),
+                            boxShadow: const [
+                              BoxShadow(
+                                blurRadius: 5.0,
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              isHover == 2
+                                  ? Image.asset(
+                                      "assets/images/about_icon_2w.png")
+                                  : Image.asset(
+                                      "assets/images/about_icon_2.png"),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              Text(
+                                "Corporate wellness programs & ecosystem",
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w700,
+                                  color: isHover == 2
+                                      ? const Color(0xFFFFFFFF)
+                                      : const Color(0xFF314584),
                                 ),
-                              ],
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                isHover == 2
-                                    ? Image.asset(
-                                        "assets/images/about_icon_2w.png")
-                                    : Image.asset(
-                                        "assets/images/about_icon_2.png"),
-                                const SizedBox(
-                                  height: 20,
+                                maxLines: 2,
+                              ),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              Text(
+                                "Inter-departmental wellness initiatives and communities using #GALF engine",
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                  color: isHover == 2
+                                      ? const Color(0xFFFFFFFF)
+                                      : const Color(0xFF314584),
                                 ),
-                                Text(
-                                  "Corporate wellness programs & ecosystem",
-                                  textAlign: TextAlign.left,
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w700,
-                                    color: isHover == 2
-                                        ? const Color(0xFFFFFFFF)
-                                        : const Color(0xFF314584),
-                                  ),
-                                  maxLines: 2,
-                                ),
-                                const SizedBox(
-                                  height: 20,
-                                ),
-                                Text(
-                                  "Inter-departmental wellness initiatives and communities using #GALF engine",
-                                  textAlign: TextAlign.left,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w400,
-                                    color: isHover == 2
-                                        ? const Color(0xFFFFFFFF)
-                                        : const Color(0xFF314584),
-                                  ),
-                                  maxLines: 4,
-                                ),
-                              ],
-                            ),
+                                maxLines: 4,
+                              ),
+                            ],
                           ),
                         ),
                       ),
@@ -387,131 +391,127 @@ class _AboutPageState extends State<AboutPage> {
                       const SizedBox(
                         height: 120,
                       ),
-                      Container(
-                        child: MouseRegion(
-                          onEnter: (event) {
-                            updateHover(3);
-                          },
-                          onExit: (event) {
-                            updateHover(-1);
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.all(30),
-                            margin: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              color: isHover == 3
-                                  ? const Color(0xFF2F7FDC)
-                                  : const Color(0xFFFFFFFF),
-                              boxShadow: const [
-                                BoxShadow(
-                                  blurRadius: 5.0,
+                      MouseRegion(
+                        onEnter: (event) {
+                          updateHover(3);
+                        },
+                        onExit: (event) {
+                          updateHover(-1);
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(30),
+                          margin: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: isHover == 3
+                                ? const Color(0xFF2F7FDC)
+                                : const Color(0xFFFFFFFF),
+                            boxShadow: const [
+                              BoxShadow(
+                                blurRadius: 5.0,
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              isHover == 3
+                                  ? Image.asset(
+                                      "assets/images/about_icon_2w.png")
+                                  : Image.asset(
+                                      "assets/images/about_icon_2.png"),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              Text(
+                                "Boutique wellness events",
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w700,
+                                  color: isHover == 3
+                                      ? const Color(0xFFFFFFFF)
+                                      : const Color(0xFF314584),
                                 ),
-                              ],
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                isHover == 3
-                                    ? Image.asset(
-                                        "assets/images/about_icon_2w.png")
-                                    : Image.asset(
-                                        "assets/images/about_icon_2.png"),
-                                const SizedBox(
-                                  height: 20,
+                                maxLines: 2,
+                              ),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              Text(
+                                "Customized holistic corporate wellness events. Registration at discounted charges for GALF retail wellness events",
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                  color: isHover == 3
+                                      ? const Color(0xFFFFFFFF)
+                                      : const Color(0xFF314584),
                                 ),
-                                Text(
-                                  "Boutique wellness events",
-                                  textAlign: TextAlign.left,
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w700,
-                                    color: isHover == 3
-                                        ? const Color(0xFFFFFFFF)
-                                        : const Color(0xFF314584),
-                                  ),
-                                  maxLines: 2,
-                                ),
-                                const SizedBox(
-                                  height: 20,
-                                ),
-                                Text(
-                                  "Customized holistic corporate wellness events. Registration at discounted charges for GALF retail wellness events",
-                                  textAlign: TextAlign.left,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w400,
-                                    color: isHover == 3
-                                        ? const Color(0xFFFFFFFF)
-                                        : const Color(0xFF314584),
-                                  ),
-                                  maxLines: 4,
-                                ),
-                              ],
-                            ),
+                                maxLines: 4,
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                      Container(
-                        child: MouseRegion(
-                          onEnter: (event) {
-                            updateHover(4);
-                          },
-                          onExit: (event) {
-                            updateHover(-1);
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.all(30),
-                            margin: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              color: isHover == 4
-                                  ? const Color(0xFF2F7FDC)
-                                  : const Color(0xFFFFFFFF),
-                              boxShadow: const [
-                                BoxShadow(
-                                  blurRadius: 5.0,
+                      MouseRegion(
+                        onEnter: (event) {
+                          updateHover(4);
+                        },
+                        onExit: (event) {
+                          updateHover(-1);
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(30),
+                          margin: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: isHover == 4
+                                ? const Color(0xFF2F7FDC)
+                                : const Color(0xFFFFFFFF),
+                            boxShadow: const [
+                              BoxShadow(
+                                blurRadius: 5.0,
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              isHover == 4
+                                  ? Image.asset(
+                                      "assets/images/about_icon_2w.png")
+                                  : Image.asset(
+                                      "assets/images/about_icon_2.png"),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              Text(
+                                "Holistic wellness mobile app",
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w700,
+                                  color: isHover == 4
+                                      ? const Color(0xFFFFFFFF)
+                                      : const Color(0xFF314584),
                                 ),
-                              ],
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                isHover == 4
-                                    ? Image.asset(
-                                        "assets/images/about_icon_2w.png")
-                                    : Image.asset(
-                                        "assets/images/about_icon_2.png"),
-                                const SizedBox(
-                                  height: 20,
+                                maxLines: 2,
+                              ),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              Text(
+                                "Easy to use and turnkey techwellness ecosystem for corporate clients",
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                  color: isHover == 4
+                                      ? const Color(0xFFFFFFFF)
+                                      : const Color(0xFF314584),
                                 ),
-                                Text(
-                                  "Holistic wellness mobile app",
-                                  textAlign: TextAlign.left,
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w700,
-                                    color: isHover == 4
-                                        ? const Color(0xFFFFFFFF)
-                                        : const Color(0xFF314584),
-                                  ),
-                                  maxLines: 2,
-                                ),
-                                const SizedBox(
-                                  height: 20,
-                                ),
-                                Text(
-                                  "Easy to use and turnkey techwellness ecosystem for corporate clients",
-                                  textAlign: TextAlign.left,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w400,
-                                    color: isHover == 4
-                                        ? const Color(0xFFFFFFFF)
-                                        : const Color(0xFF314584),
-                                  ),
-                                  maxLines: 4,
-                                ),
-                              ],
-                            ),
+                                maxLines: 4,
+                              ),
+                            ],
                           ),
                         ),
                       ),
