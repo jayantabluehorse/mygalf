@@ -48,7 +48,7 @@ class _SignUpPageState extends State<SignUpPage> {
         children: [
           Column(
             children: [
-              Navbar(currentScreen: currentScreen),
+              Navbar(currentScreen: currentScreen, selected: 'signup'),
               LoginTop(),
               Background(currentWidth)
             ],
